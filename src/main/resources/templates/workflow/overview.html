@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${viewMode == 'ADMIN' ? 'Admin Workflow Monitor' : 'Operations Overview'} + ' | MediCare Pharmacy'"></title>
+    <link rel="stylesheet" th:href="@{/css/module.css}">
+    <link rel="stylesheet" th:href="@{/css/delivery-analytics.css}">
+</head>
+<body th:class="${viewMode == 'ADMIN' ? 'module-page admin workflow-overview-page' : 'module-page operations workflow-overview-page'}">
+<div th:replace="~{fragments/module-header :: header}"></div>
+
+<main class="workflow-shell">
+    <section class="workflow-hero overview-hero" data-reveal>
+        <div>
+            <p class="eyebrow" th:text="${viewMode == 'ADMIN' ? 'Admin Control Room' : 'Pharmacy Operations'}"></p>
+            <h1 th:text="${viewMode == 'ADMIN' ? 'One connected pharmacy workflow.' : 'See every handover, before it becomes a problem.'}"></h1>
+            <p th:text="${viewMode == 'ADMIN' ? 'Monitor the operational chain from inventory availability to paid sale, delivery dispatch, and customer service.' : 'Use this live overview to coordinate stock risks, cashier demand, and delivery execution across the pharmacy.'}"></p>
+        </div>
+        <div class="hero-coverage-card">
+            <span class="live-dot"></span>
+            <div><strong>Live workflow view</strong><small>Inventory · Cashier · Delivery</small></div>
+            <b th:text="${analytics.trackedDeliveryCount + ' tracked'}"></b>
+        </div>
+    </section>
+
+    <nav class="workflow-nav" aria-label="Workflow navigation" data-reveal>
+        <a th:if="${viewMode == 'OPERATIONS'}" class="active" th:href="@{/operations/overview}">Operations overview</a>
+        <a th:if="${viewMode == 'ADMIN'}" class="active" th:href="@{/admin/workflow-monitor}">Workflow monitor</a>
+        <a th:href="@{/inventory/medicines}">Medicine records</a>
+        <a th:href="@{/cashier/checkout}">Cashier checkout</a>
+        <a th:href="@{/delivery/dispatch}">Delivery dispatch</a>
+        <a th:href="@{/feedback}">Customer feedback</a>
+    </nav>
+
+    <section class="analytics-grid" data-reveal>
+        <article class="metric-card dark-metric">
+            <span class="metric-mark">₨</span>
+            <p>Paid revenue</p>
+            <strong th:text="${'LKR ' + #numbers.formatDecimal(analytics.paidRevenue, 1, 'COMMA', 2, 'POINT')}"></strong>
+            <small th:text="${analytics.paidOrderCount + ' paid cashier order(s)'}"></small>
+        </article>
+        <article class="metric-card gold-metric">
+            <span class="metric-mark">Q</span>
+            <p>Awaiting dispatch</p>
+            <strong class="count-up" th:attr="data-count=${analytics.pendingDeliveryCount}" th:text="${analytics.pendingDeliveryCount}"></strong>
+            <small>Paid orders ready for rider assignment</small>
+        </article>
+        <article class="metric-card blue-metric">
+            <span class="metric-mark">→</span>
+            <p>On the road</p>
+            <strong class="count-up" th:attr="data-count=${analytics.activeDeliveryCount}" th:text="${analytics.activeDeliveryCount}"></strong>
+            <small>Assigned or out-for-delivery jobs</small>
+        </article>
+        <article class="metric-card green-metric">
+            <span class="metric-mark">✓</span>
+            <p>Delivered</p>
+            <strong class="count-up" th:attr="data-count=${analytics.deliveredCount}" th:text="${analytics.deliveredCount}"></strong>
+            <small th:text="${analytics.deliveryCompletionPercent + '% completion rate'}"></small>
+        </article>
+    </section>
+
+    <section class="command-grid">
+        <article class="workflow-card health-card" data-reveal>
+            <div class="card-heading">
+                <div><p class="eyebrow">Attention needed</p><h2>Inventory & transfer health</h2></div>
+                <a class="icon-link" th:href="@{/inventory/medicines}" aria-label="Open medicine records">↗</a>
+            </div>
+            <div class="health-list">
+                <div class="health-row danger-row">
+                    <span>!</span>
+                    <p><strong th:text="${analytics.lowStockCount + ' low-stock item(s)'}"></strong><small>Reorder before a cashier sale is blocked.</small></p>
+                    <a th:href="@{/inventory/medicines}">Review</a>
+                </div>
+                <div class="health-row gold-row">
+                    <span>◷</span>
+                    <p><strong th:text="${analytics.expiryAlertCount + ' expiry alert(s)'}"></strong><small>Check batches before pharmacist dispensing.</small></p>
+                    <a th:href="@{/inventory/medicines}">Review</a>
+                </div>
+                <div class="health-row blue-row">
+                    <span>↔</span>
+                    <p><strong th:text="${analytics.inTransitTransferCount + ' stock transfer(s) in transit'}"></strong><small>Receive stock to make it available at the branch.</small></p>
+                    <a th:href="@{/inventory/medicines}">Review</a>
+                </div>
+                <div class="health-row green-row">
+                    <span>★</span>
+                    <p><strong th:text="${#numbers.formatDecimal(analytics.averageFeedbackRating, 1, 1) + ' / 5 average feedback rating'}"></strong><small th:text="${analytics.newFeedbackCount + ' new item(s) · ' + analytics.feedbackCount + ' total response(s)'}"></small></p>
+                    <a th:if="${viewMode == 'ADMIN'}" th:href="@{/admin/feedback}">Review</a>
+                    <span th:if="${viewMode != 'ADMIN'}" class="read-only-link">CSAT</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="workflow-card delivery-progress-card" data-reveal>
+            <div class="card-heading"><div><p class="eyebrow">Delivery execution</p><h2>Completion pulse</h2></div></div>
+            <div class="progress-ring" th:attr="data-progress=${analytics.deliveryCompletionPercent}" aria-label="Delivery completion rate">
+                <div><strong th:text="${analytics.deliveryCompletionPercent + '%'}"></strong><span>completed</span></div>
+            </div>
+            <div class="progress-key"><span><i class="pending-key"></i>Pending <b th:text="${analytics.pendingDeliveryCount}"></b></span><span><i class="active-key"></i>Active <b th:text="${analytics.activeDeliveryCount}"></b></span><span><i class="done-key"></i>Delivered <b th:text="${analytics.deliveredCount}"></b></span></div>
+            <a class="secondary-action full-action" th:href="@{/delivery/dispatch}">Manage dispatch queue <span>→</span></a>
+        </article>
+    </section>
+
+    <section class="workflow-card role-lane-card" data-reveal>
+        <div class="card-heading"><div><p class="eyebrow">Connected roles</p><h2>One order, one visible handover chain</h2></div></div>
+        <div class="role-lane">
+            <a th:href="@{/inventory/medicines}" class="lane-node inventory-node"><b>01</b><span>Inventory</span><small>Medicine records</small></a>
+            <i>→</i>
+            <a th:href="@{/cashier/checkout}" class="lane-node cashier-node"><b>02</b><span>Cashier</span><small>Paid customer order</small></a>
+            <i>→</i>
+            <a th:href="@{/delivery/dispatch}" class="lane-node delivery-node"><b>03</b><span>Delivery</span><small>Dispatch & completion</small></a>
+            <i>→</i>
+            <a th:href="@{/feedback}" class="lane-node feedback-node"><b>04</b><span>Feedback</span><small>Service improvement</small></a>
+        </div>
+    </section>
+
+    <section class="overview-tables">
+        <article class="workflow-card table-card" data-reveal>
+            <div class="card-heading"><div><p class="eyebrow">Cashier handover</p><h2>Recent paid orders</h2></div><a class="icon-link" th:href="@{/cashier/orders}" aria-label="Open customer orders">↗</a></div>
+            <label class="table-filter"><span>⌕</span><input type="search" data-table-filter="paid-orders-table" placeholder="Filter paid orders"></label>
+            <div class="table-wrap">
+                <table id="paid-orders-table">
+                    <thead><tr><th>Order</th><th>Customer</th><th>Value</th><th>Lifecycle</th></tr></thead>
+                    <tbody>
+                    <tr th:each="order : ${recentOrders}">
+                        <td><strong th:text="${order.orderNumber}"></strong><small th:text="${#temporals.format(order.orderDate, 'dd MMM, HH:mm')}"></small></td>
+                        <td><strong th:text="${order.customerName}"></strong><small th:text="${order.customerPhone}"></small></td>
+                        <td class="money" th:text="${'LKR ' + order.totalAmount}"></td>
+                        <td><span class="status-tag" th:classappend="${' ' + #strings.toLowerCase(order.orderStatus)}" th:text="${order.orderStatus}"></span></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(recentOrders)}"><td colspan="4" class="empty-cell">No paid checkout has been recorded yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <article class="workflow-card table-card" data-reveal>
+            <div class="card-heading"><div><p class="eyebrow">Last mile</p><h2>Recent delivery work</h2></div><a class="icon-link" th:href="@{/delivery/dispatch}" aria-label="Open delivery dispatch">↗</a></div>
+            <label class="table-filter"><span>⌕</span><input type="search" data-table-filter="deliveries-table" placeholder="Filter deliveries"></label>
+            <div class="table-wrap">
+                <table id="deliveries-table">
+                    <thead><tr><th>Delivery</th><th>Customer</th><th>Rider</th><th>Status</th></tr></thead>
+                    <tbody>
+                    <tr th:each="delivery : ${recentDeliveries}">
+                        <td><strong th:text="${delivery.deliveryNumber}"></strong><small th:text="${delivery.orderId == null ? 'Manual delivery' : 'Order #' + delivery.orderId}"></small></td>
+                        <td><strong th:text="${delivery.customerName}"></strong><small th:text="${delivery.deliveryDate}"></small></td>
+                        <td th:text="${delivery.deliveryPersonName ?: 'Unassigned'}"></td>
+                        <td><span class="status-tag" th:classappend="${' ' + #strings.toLowerCase(delivery.deliveryStatus)}" th:text="${delivery.deliveryStatus}"></span></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(recentDeliveries)}"><td colspan="4" class="empty-cell">No delivery request has been created yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </section>
+
+    <section class="next-actions" data-reveal>
+        <div><p class="eyebrow">Your next move</p><h2 th:text="${viewMode == 'ADMIN' ? 'Keep the pharmacy workflow reliable.' : 'Coordinate the next operational handover.'}"></h2></div>
+        <div class="action-set">
+            <a th:href="@{/procurement/receipts}">Receive supplier stock <span>→</span></a>
+            <a th:href="@{/delivery/dispatch}">Dispatch a paid order <span>→</span></a>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/delivery-analytics.js}"></script>
+</body>
+</html>

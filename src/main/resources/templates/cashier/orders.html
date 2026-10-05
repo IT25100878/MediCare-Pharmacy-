@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Orders | MediCare Pharmacy</title>
+    <link rel="stylesheet" th:href="@{/css/module.css}" href="/css/module.css">
+</head>
+<body class="module-page cashier">
+<div th:replace="~{fragments/module-header :: header}"></div>
+<main class="module-main">
+    <p class="role-label">Cashier</p>
+    <h1>Customer Orders</h1>
+    <p class="page-intro">Create customer orders, apply discounts, update payment status, and issue order records.</p>
+    <nav class="role-nav">
+<a th:href="@{/cashier/dashboard}">Cashier Dashboard</a>
+<a class="active" th:href="@{/cashier/orders}">Customer Orders</a>
+<a th:href="@{/cashier/checkout}">Smart Checkout</a>
+<a th:href="@{/cashier/invoices}">Invoice Preview</a>
+<a th:href="@{/cashier/invoices}">Invoice History</a>
+<a th:href="@{/feedback}">Customer Feedback Capture</a>
+</nav>
+
+    <div class="notice success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="notice error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <section class="two-panel-layout">
+        <article class="form-card">
+            <p class="section-label">Create</p>
+            <h2>New customer order</h2>
+            <form th:action="@{/cashier/orders}" th:object="${order}" method="post" class="record-form" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <p class="form-error" th:if="${#fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+                <div class="form-grid">
+                    <label>Order number
+                        <input type="text" th:field="*{orderNumber}" maxlength="30" placeholder="ORD-2026-001" required>
+                        <small th:errors="*{orderNumber}"></small>
+                    </label>
+                    <label>Order date and time
+                        <input type="datetime-local" th:field="*{orderDate}" required>
+                        <small th:errors="*{orderDate}"></small>
+                    </label>
+                    <label>Customer name
+                        <input type="text" th:field="*{customerName}" maxlength="120" required>
+                        <small th:errors="*{customerName}"></small>
+                    </label>
+                    <label>Customer phone
+                        <input type="text" th:field="*{customerPhone}" maxlength="30" required>
+                        <small th:errors="*{customerPhone}"></small>
+                    </label>
+                    <label>Total amount (LKR)
+                        <input type="number" th:field="*{totalAmount}" min="0" step="0.01" required>
+                        <small th:errors="*{totalAmount}"></small>
+                    </label>
+                    <label>Discount amount (LKR)
+                        <input type="number" th:field="*{discountAmount}" min="0" step="0.01" required>
+                        <small th:errors="*{discountAmount}"></small>
+                    </label>
+                    <label>Payment status
+                        <select th:field="*{paymentStatus}">
+                            <option value="PENDING">Pending</option>
+                            <option value="PAID">Paid</option>
+                            <option value="REFUNDED">Refunded</option>
+                        </select>
+                        <small th:errors="*{paymentStatus}"></small>
+                    </label>
+                    <label>Order status
+                        <select th:field="*{orderStatus}">
+                            <option value="NEW">New</option>
+                            <option value="PROCESSING">Processing</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="CANCELLED">Cancelled</option>
+                        </select>
+                        <small th:errors="*{orderStatus}"></small>
+                    </label>
+                </div>
+                <button class="primary-button" type="submit">Create order</button>
+            </form>
+        </article>
+
+        <aside class="info-card">
+            <p class="section-label">Cashier workflow</p>
+            <h2>Order controls</h2>
+            <ul>
+                <li>Order number must be unique.</li>
+                <li>Discount cannot exceed total amount.</li>
+                <li>Use Paid only after payment is accepted.</li>
+                <li>Use Feedback to contact the Admin.</li>
+            </ul>
+            <a th:href="@{/feedback}">Send feedback →</a>
+        </aside>
+    </section>
+
+    <section class="list-card">
+        <div class="list-heading">
+            <div><p class="section-label">Read</p><h2>Order list</h2></div>
+            <form th:action="@{/cashier/orders}" method="get" class="search-form">
+                <input name="keyword" th:value="${keyword}" type="search" placeholder="Search number, customer, phone">
+                <button type="submit">Search</button>
+                <a th:if="${!#strings.isEmpty(keyword)}" th:href="@{/cashier/orders}">Clear</a>
+            </form>
+        </div>
+        <div class="table-scroll">
+            <table>
+                <thead><tr><th>Order</th><th>Customer</th><th>Amounts</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                <tr th:each="row : ${orders}">
+                    <td><strong th:text="${row.orderNumber}">ORD</strong><small th:text="${#temporals.format(row.orderDate, 'dd MMM yyyy HH:mm')}">Date</small></td>
+                    <td><strong th:text="${row.customerName}">Customer</strong><small th:text="${row.customerPhone}">Phone</small></td>
+                    <td><span th:text="${'Total: ' + #numbers.formatDecimal(row.totalAmount, 1, 2)}">0</span><small th:text="${'Discount: ' + #numbers.formatDecimal(row.discountAmount, 1, 2)}">0</small></td>
+                    <td><span class="status-badge" th:text="${row.paymentStatus}">PENDING</span></td>
+                    <td><span class="status-badge" th:text="${row.orderStatus}">NEW</span></td>
+                    <td class="actions">
+                        <a th:href="@{/cashier/orders/{orderId}/edit(orderId=${row.orderId})}">Edit</a>
+                        <form th:if="${row.orderStatus != 'COMPLETED' and row.orderStatus != 'CANCELLED' and row.paymentStatus != 'PAID'}" th:action="@{/cashier/orders/{orderId}/delete(orderId=${row.orderId})}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" data-confirm="Cancel this customer order? It will remain in the audit history.">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(orders)}"><td colspan="6" class="empty-row">No customer orders found.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/module.js}" src="/js/module.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="store-header" th:fragment="header">
+    <div class="utility-bar">
+        <div class="content-width utility-content">
+            <p><span aria-hidden="true">●</span> Pharmacy support and secure prescription review</p>
+            <div><a href="tel:+94000000000">Call: +94 00 000 0000</a><span aria-hidden="true">|</span><a href="mailto:support@medicare.local">support@medicare.local</a></div>
+        </div>
+    </div>
+    <div class="content-width navigation-row">
+        <a class="store-brand" th:href="@{/}" aria-label="MediCare Pharmacy home">
+            <img class="store-logo" th:src="@{/images/medicare-for-all-logo.webp}" src="/images/medicare-for-all-logo.webp" alt="MediCare for All logo">
+            <span class="brand-text">Medi<span>Care</span><small>PHARMACY</small></span>
+        </a>
+        <button class="store-menu-button" id="storeMenuButton" type="button" aria-label="Open menu" aria-controls="storeNavigation" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <nav class="store-navigation" id="storeNavigation" aria-label="Primary navigation">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/shop}">Shop medicines</a>
+            <a th:href="@{/prescription-request}">Upload prescription</a>
+            <a th:href="@{/about}">About</a>
+            <a th:href="@{/contact}">Contact</a>
+            <a th:href="@{/register}">Register</a>
+            <a class="staff-login" th:href="@{/login}">Staff sign in</a>
+        </nav>
+    </div>
+</header>
+
+<footer class="store-footer" th:fragment="footer">
+    <div class="content-width footer-grid">
+        <div>
+            <a class="store-brand footer-brand" th:href="@{/}"><img class="store-logo" th:src="@{/images/medicare-for-all-logo.webp}" src="/images/medicare-for-all-logo.webp" alt="MediCare for All logo"><span class="brand-text">Medi<span>Care</span><small>PHARMACY</small></span></a>
+            <p>Reliable pharmacy service with a secure team workspace behind every request.</p>
+        </div>
+        <div>
+            <h2>Customer services</h2>
+            <a th:href="@{/shop}">Browse medicines</a>
+            <a th:href="@{/prescription-request}">Upload prescription</a>
+            <a th:href="@{/contact}">Contact support</a>
+        </div>
+        <div>
+            <h2>Staff portal</h2>
+            <a th:href="@{/login}">Secure sign in</a>
+            <a th:href="@{/register}">Register team member</a>
+            <a th:href="@{/feedback}">Send feedback</a>
+        </div>
+        <div>
+            <h2>Contact</h2>
+            <p>+94 00 000 0000<br>support@medicare.local<br>Mon–Sat: 8:00 AM–8:00 PM</p>
+        </div>
+    </div>
+    <div class="content-width footer-bottom"><span>© <span id="currentYear"></span> MediCare Pharmacy</span><span>Professional Pharmacy Management System</span></div>
+</footer>
+</body>
+</html>

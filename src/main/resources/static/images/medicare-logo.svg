@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="MediCare Pharmacy logo">
+  <defs>
+    <linearGradient id="shield" x1="10" y1="6" x2="86" y2="90" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ef4e54"/>
+      <stop offset=".52" stop-color="#b9272d"/>
+      <stop offset="1" stop-color="#721419"/>
+    </linearGradient>
+    <linearGradient id="cross" x1="38" y1="25" x2="59" y2="68" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff7db"/>
+      <stop offset="1" stop-color="#d5a51f"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="28" fill="#161411"/>
+  <path d="M48 10 79 22v24c0 20.1-12.3 34.4-31 40C29.3 80.4 17 66.1 17 46V22l31-12Z" fill="url(#shield)"/>
+  <path d="M41.5 26h13v14.5H69v13H54.5V68h-13V53.5H27v-13h14.5V26Z" fill="url(#cross)"/>
+  <path d="M24 71.5c7.1 8.2 14.7 11.9 24 14.5 9.3-2.6 16.9-6.3 24-14.5" fill="none" stroke="#f6ce59" stroke-linecap="round" stroke-width="2.4" opacity=".74"/>
+</svg>

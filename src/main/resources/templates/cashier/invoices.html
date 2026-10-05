@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Invoices | MediCare Pharmacy</title><link rel="stylesheet" th:href="@{/css/module.css}"></head>
+<body class="module-page cashier">
+<div th:replace="~{fragments/module-header :: header}"></div>
+<main class="module-main"><p class="role-label">Cashier / Customer Service</p><h1>Invoice centre</h1><p class="page-intro">Every completed checkout creates an invoice. View, print, and retain the exact sales and promotion record from one place.</p>
+    <nav class="role-nav">
+        <a th:href="@{/cashier/dashboard}">Cashier Dashboard</a>
+        <a th:href="@{/cashier/orders}">Customer Orders</a>
+        <a th:href="@{/cashier/checkout}">Smart Checkout</a>
+        <a class="active" th:href="@{/cashier/invoices}">Invoice History</a>
+        <a th:href="@{/feedback}">Customer Feedback</a>
+    </nav>
+    <section class="list-card" data-module-reveal><div class="list-heading"><div><p class="section-label">Read</p><h2>Issued invoices</h2></div><a class="primary-button" th:href="@{/cashier/checkout}">New checkout</a></div>
+        <div class="table-scroll"><table><thead><tr><th>Invoice</th><th>Order ID</th><th>Generated</th><th>Print record</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+        <tr th:each="invoice : ${invoices}"><td><strong th:text="${invoice.invoiceNumber}">INV</strong></td><td th:text="${'Order #' + invoice.orderId}">Order</td><td th:text="${invoice.generatedAt == null ? '—' : #temporals.format(invoice.generatedAt, 'dd MMM yyyy HH:mm')}">Date</td><td th:text="${invoice.printedAt == null ? 'Not printed' : #temporals.format(invoice.printedAt, 'dd MMM yyyy HH:mm')}">Print</td><td><span class="status-badge" th:text="${invoice.invoiceStatus}">ISSUED</span></td><td class="actions"><a th:href="@{/cashier/invoices/{invoiceId}(invoiceId=${invoice.invoiceId})}">View invoice</a></td></tr>
+        <tr th:if="${#lists.isEmpty(invoices)}"><td colspan="6" class="empty-row">No invoices have been generated yet. Complete a checkout to create one.</td></tr>
+        </tbody></table></div>
+    </section>
+</main><script th:src="@{/js/module.js}" defer></script></body></html>

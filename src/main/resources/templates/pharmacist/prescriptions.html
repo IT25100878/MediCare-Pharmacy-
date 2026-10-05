@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Prescription Review | MediCare Pharmacy</title><link rel="stylesheet" th:href="@{/css/module.css}"></head>
+<body class="module-page pharmacist"><div th:replace="~{fragments/module-header :: header}"></div>
+<main class="module-main">
+<p class="role-label">Duty Pharmacist</p>
+<h1>Prescription review queue</h1>
+<p class="page-intro">Review uploaded JPG, JPEG, PNG, or PDF prescriptions. Verify clinically, then record an approved or rejected decision with an audit note.</p>
+<nav class="role-nav">
+<a th:href="@{/pharmacist/dashboard}">Pharmacist Dashboard</a>
+<a th:href="@{/pharmacist/prescriptions?status=PENDING}">Pending Prescriptions</a>
+<a class="active" th:href="@{/pharmacist/prescriptions}">Prescription Review</a>
+<a th:href="@{/pharmacist/prescriptions}">Prescription History</a>
+<a th:href="@{/pharmacist/prescriptions?status=APPROVED}">Refill / Dispensing Check</a>
+<a th:href="@{/pharmacist/prescriptions}">Prescription Audit Log</a>
+</nav>
+<div class="notice success" th:if="${successMessage}" th:text="${successMessage}"></div>
+<div class="notice error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+<section class="two-panel-layout">
+<article class="list-card" data-module-reveal>
+<p class="section-label">Protected workflow</p>
+<h2>Upload &#8594; verify &#8594; dispense</h2>
+<p class="page-intro">Upload a prescription file to create a new record, or review files submitted via the public prescription page. Approved records link to a one-time Cashier checkout.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;">
+<a class="primary-button" th:href="@{/pharmacist/prescriptions/new}">+ Upload new prescription</a>
+<a class="primary-button" th:href="@{/prescription-request}" style="background:#0f8b8d;">Public upload page</a>
+</div>
+</article>
+<aside class="info-card" data-module-reveal>
+<p class="section-label">Clinical guardrails</p>
+<h2>Safe decisions</h2>
+<ul>
+<li>File types accepted: PNG, JPG, JPEG, PDF.</li>
+<li>No URL field &#8212; use the Choose File button only.</li>
+<li>Review the actual file before approving.</li>
+<li>A clear rejection reason is required for invalid requests.</li>
+<li>Approved prescriptions are linked to a one-time checkout.</li>
+<li>Archive retains the file and decision history.</li>
+</ul>
+<a th:href="@{/feedback}">Send feedback &#8594;</a>
+</aside>
+</section>
+<section class="list-card" data-module-reveal>
+<div class="list-heading">
+<div><p class="section-label">Read &amp; update</p><h2>Uploaded prescription records</h2></div>
+<form th:action="@{/pharmacist/prescriptions}" method="get" class="search-form">
+<input name="keyword" th:value="${keyword}" type="search" placeholder="Search number, customer, phone">
+<select name="status">
+<option value="" th:selected="${#strings.isEmpty(selectedStatus)}">All statuses</option>
+<option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">Pending</option>
+<option value="APPROVED" th:selected="${selectedStatus == 'APPROVED'}">Approved</option>
+<option value="REJECTED" th:selected="${selectedStatus == 'REJECTED'}">Rejected</option>
+</select>
+<button type="submit">Filter</button>
+</form>
+</div>
+<div class="table-scroll"><table><thead><tr><th>Prescription</th><th>Customer</th><th>File</th><th>Status</th><th>Clinical note</th><th>Actions</th></tr></thead><tbody>
+<tr th:each="row : ${prescriptions}">
+<td><strong th:text="${row.prescriptionNumber}">RX</strong><small th:text="${row.createdAt == null ? '&#8212;' : #temporals.format(row.createdAt,'dd MMM yyyy HH:mm')}">Date</small></td>
+<td><strong th:text="${row.customerName}">Customer</strong><small th:text="${row.customerPhone}">Phone</small></td>
+<td><a th:if="${row.prescriptionFilePath != null and !#strings.isEmpty(row.prescriptionFilePath)}" th:href="${row.prescriptionFilePath}" target="_blank" rel="noopener">Open protected file &#8599;</a><span th:unless="${row.prescriptionFilePath != null and !#strings.isEmpty(row.prescriptionFilePath)}">No uploaded file</span></td>
+<td><span class="status-badge" th:text="${row.prescriptionStatus}">PENDING</span></td>
+<td th:text="${row.pharmacistNote == null or #strings.isEmpty(row.pharmacistNote) ? '&#8212;' : row.pharmacistNote}">Note</td>
+<td class="actions">
+<a th:href="@{/pharmacist/prescriptions/{prescriptionId}/edit(prescriptionId=${row.prescriptionId})}">Review</a>
+<form th:action="@{/pharmacist/prescriptions/{prescriptionId}/delete(prescriptionId=${row.prescriptionId})}" method="post">
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+<button type="submit" data-confirm="Archive this prescription? It will stay in the protected audit history.">Archive</button>
+</form>
+</td>
+</tr>
+<tr th:if="${#lists.isEmpty(prescriptions)}"><td colspan="6" class="empty-row">No uploaded prescriptions match this review queue.</td></tr>
+</tbody></table></div>
+</section>
+</main>
+<script th:src="@{/js/module.js}" defer></script>
+</body>
+</html>

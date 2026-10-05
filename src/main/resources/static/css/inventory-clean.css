@@ -1,0 +1,51 @@
+/* Focused CRUD layout for the Inventory Supervisor. */
+.inventory-main { padding-top: 44px; }
+.medicine-hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 26px;
+    margin-bottom: 20px;
+    padding: clamp(25px, 4vw, 42px);
+    overflow: hidden;
+    border: 1px solid rgba(15, 139, 141, .17);
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at 96% 12%, rgba(93, 200, 239, .30), transparent 28%),
+        radial-gradient(circle at 74% 120%, rgba(132, 94, 194, .13), transparent 35%),
+        linear-gradient(123deg, #0b3049, #0f7274 98%);
+    box-shadow: 0 22px 48px rgba(11, 48, 73, .16);
+    color: #fff;
+}
+.medicine-hero .role-label { color: #b9f1e0; }
+.medicine-hero .role-label::before { background: #78d5ca; box-shadow: 0 0 0 5px rgba(120, 213, 202, .16); }
+.medicine-hero h1 { margin: 0; color: #fff; font-size: clamp(2.3rem, 4.3vw, 4rem); letter-spacing: -2px; }
+.medicine-hero p:not(.role-label) { max-width: 700px; margin: 13px 0 0; color: rgba(255, 255, 255, .79); font-size: .94rem; line-height: 1.62; }
+.medicine-live-state { display: flex; min-width: 195px; align-items: center; gap: 10px; padding: 13px; border: 1px solid rgba(255, 255, 255, .19); border-radius: 13px; background: rgba(2, 35, 51, .23); }
+.medicine-live-state > span { width: 9px; height: 9px; border-radius: 50%; background: #78d5ca; box-shadow: 0 0 0 5px rgba(120, 213, 202, .13), 0 0 15px #78d5ca; }
+.medicine-live-state strong, .medicine-live-state small { display: block; }
+.medicine-live-state strong { color: #fff; font-size: .76rem; }
+.medicine-live-state small { margin-top: 3px; color: rgba(255,255,255,.67); font-size: .67rem; }
+
+.medicine-stat-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; margin: 0 0 25px; }
+.medicine-stat-row article { display: flex; min-height: 83px; align-items: center; gap: 12px; padding: 16px; border: 1px solid #d8e9e8; border-radius: 15px; background: rgba(255,255,255,.9); box-shadow: 0 9px 21px rgba(11,48,73,.05); }
+.stat-icon { display: grid; width: 36px; height: 36px; flex: 0 0 auto; place-items: center; border-radius: 11px; background: #e1f7f1; color: #0b6b6c; font-size: .78rem; font-weight: 900; }
+.stat-icon.amber { background: #fff3d9; color: #a56a09; }.stat-icon.violet { background: #f0ebff; color: #704abb; }
+.medicine-stat-row small { display: block; color: #718895; font-size: .71rem; font-weight: 760; }.medicine-stat-row strong { display: block; margin-top: 3px; color: #0b3049; font-size: 1.38rem; line-height: 1; }
+
+.inventory-entry-layout { margin-bottom: 25px; }
+.inventory-card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; }
+.inventory-card-heading h2 { margin: 0; }.inventory-card-heading p:not(.section-label) { margin: 7px 0 0; color: #617984; font-size: .79rem; line-height: 1.5; }
+.inventory-card-heading > span { display: grid; width: 35px; height: 35px; place-items: center; border-radius: 11px; background: var(--accent-soft); color: var(--accent-dark); font-size: 1.35rem; font-weight: 400; }
+.record-form b { color: #b6404b; }.inventory-help-card { align-self: stretch; }.inventory-tip { margin: 0; padding: 11px 12px; border-radius: 10px; background: rgba(255,255,255,.74); color: #54717e; font-size: .75rem; line-height: 1.5; }
+.inventory-tip b { color: var(--accent-dark); }
+
+.medicine-list-card { padding-top: clamp(23px, 3vw, 33px); }
+.list-subtitle { margin: 7px 0 0; color: #687f8b; font-size: .78rem; line-height: 1.45; }
+.inventory-warning { background: #fff3dc !important; color: #a15f00 !important; }.inventory-rx { background: #f0ebff !important; color: #6943af !important; }.inventory-otc { background: #e1f7f1 !important; color: #0b6b6c !important; }
+
+.inventory-edit-main { padding-top: 50px; }.inventory-edit-card { max-width: 820px; }.inventory-record-reference { display: flex; align-items: center; gap: 11px; margin: 0 0 23px; padding: 12px; border: 1px solid #d9ebe8; border-radius: 12px; background: #f7fcfb; }
+.inventory-record-reference > span { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 10px; background: #e1f7f1; color: #0b6b6c; font-size: .75rem; font-weight: 900; }.inventory-record-reference p { margin: 0; }.inventory-record-reference strong, .inventory-record-reference small { display: block; }.inventory-record-reference strong { color: #0b3049; font-size: .8rem; }.inventory-record-reference small { margin-top: 3px; color: #718895; font-size: .7rem; }
+
+@media (max-width: 870px) { .medicine-hero { align-items: flex-start; flex-direction: column; }.medicine-live-state { min-width: 0; }.medicine-stat-row { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .inventory-main { padding-top: 72px; }.medicine-hero { padding: 28px 22px; border-radius: 19px; }.medicine-hero h1 { font-size: 2.35rem; letter-spacing: -1.5px; }.inventory-edit-main { padding-top: 78px; } }

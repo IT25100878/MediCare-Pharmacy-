@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a344d">
+    <title>Sign in | MediCare Pharmacy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/auth.css}" href="/css/auth.css">
+    <script defer th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+</head>
+<body class="auth-page login-page">
+<main class="auth-shell">
+    <section class="auth-showcase" aria-label="MediCare secure access information">
+        <a class="auth-brand" th:href="@{/}" aria-label="MediCare Pharmacy home">
+            <img class="auth-logo" th:src="@{/images/medicare-for-all-logo.webp}" src="/images/medicare-for-all-logo.webp" alt="MediCare for All logo"><span class="auth-brand-copy">Medi<span>Care</span><small>PHARMACY</small></span>
+        </a>
+
+        <div class="showcase-copy">
+            <p class="auth-kicker"><span></span> SECURE PHARMACY OPERATIONS</p>
+            <h1>Your workday, clearly organised.</h1>
+            <p>Sign in once and go directly to the tools, records, and responsibilities assigned to your role.</p>
+        </div>
+
+        <div class="showcase-status">
+            <div class="status-orb">✓</div>
+            <div>
+                <strong>Protected role access</strong>
+                <small>Your workspace is controlled by your assigned role.</small>
+            </div>
+        </div>
+        <div class="showcase-grid" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+        </div>
+    </section>
+
+    <section class="auth-workspace">
+        <div class="workspace-topbar">
+            <a th:href="@{/}" class="home-return">← Back to home</a>
+            <span class="security-note"><i></i> Encrypted sign in</span>
+        </div>
+
+        <div class="auth-card login-card">
+            <div class="card-heading">
+                <p class="form-eyebrow">WELCOME BACK</p>
+                <h2>Sign in to MediCare</h2>
+                <p>Use the email address and password you registered with.</p>
+            </div>
+
+            <div class="form-alert success" th:if="${successMessage}" th:text="${successMessage}" role="status"></div>
+            <div class="form-alert error" th:if="${param.error}" role="alert">The email or password is incorrect. Please try again.</div>
+            <div class="form-alert success" th:if="${param.logout}" role="status">You have been signed out safely.</div>
+
+            <form th:action="@{/login}" method="post" class="auth-form" id="loginForm">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="field-group">
+                    <label for="email">Email address</label>
+                    <input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com" required autofocus>
+                </div>
+
+                <div class="field-group">
+                    <label for="password">Password</label>
+                    <div class="password-control">
+                        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+                        <button class="password-toggle" type="button" data-password-toggle="password" aria-label="Show password">Show</button>
+                    </div>
+                </div>
+
+                <button class="auth-submit" type="submit">Sign in securely <span>→</span></button>
+            </form>
+
+            <div class="auth-divider"><span>New to MediCare?</span></div>
+            <p class="form-footer">Create your role-based account <a th:href="@{/register}">Register now →</a></p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Feedback Cases | MediCare Pharmacy</title><link rel="stylesheet" th:href="@{/css/module.css}"></head>
+<body class="module-page feedback-manager"><div th:replace="~{fragments/module-header :: header}"></div>
+<main class="module-main"><p class="role-label">Customer Feedback Manager</p><h1>Feedback case workspace</h1><p class="page-intro">Turn every comment, inquiry, or complaint into a visible case with priority, ownership, response, and a clear resolution status.</p>
+<nav class="role-nav">
+<a th:href="@{/feedback-management/dashboard}">Feedback Dashboard</a>
+<a class="active" th:href="@{/feedback-management/cases}">Feedback Inbox</a>
+<a th:href="@{/feedback-management/cases}">Complaint Resolution Board</a>
+<a th:href="@{/feedback-management/analytics}">Feedback Analytics</a>
+<a th:href="@{/feedback-management/cases?includeArchived=true}">Archived Feedback</a>
+</nav>
+<div class="notice success" th:if="${successMessage}" th:text="${successMessage}"></div>
+<section class="list-card" data-module-reveal><div class="list-heading"><div><p class="section-label">Case queue</p><h2>Customer feedback</h2></div>
+<form th:action="@{/feedback-management/cases}" method="get" class="search-form"><input name="keyword" th:value="${keyword}" type="search" placeholder="Search customer, subject, category"><select name="status"><option value="" th:selected="${#strings.isEmpty(selectedStatus)}">All statuses</option><option value="NEW" th:selected="${selectedStatus == 'NEW'}">New</option><option value="IN_PROGRESS" th:selected="${selectedStatus == 'IN_PROGRESS'}">In progress</option><option value="RESOLVED" th:selected="${selectedStatus == 'RESOLVED'}">Resolved</option><option value="CLOSED" th:selected="${selectedStatus == 'CLOSED'}">Closed</option></select><label class="checkbox-label"><input type="checkbox" name="includeArchived" value="true" th:checked="${includeArchived}"> Archived</label><button type="submit">Filter</button></form></div>
+<div class="table-scroll"><table><thead><tr><th>Customer</th><th>Feedback</th><th>Rating</th><th>Category / priority</th><th>Status</th><th>Owner</th><th>Actions</th></tr></thead><tbody>
+<tr th:each="row : ${cases}"><td><strong th:text="${row.customerName ?: 'Anonymous customer'}">Customer</strong><small th:text="${row.customerPhone ?: (row.userId == null ? 'Public feedback' : 'Staff feedback')}">Contact</small></td><td><strong th:text="${row.subject}">Subject</strong><small th:text="${row.message}">Message</small></td><td th:text="${row.rating == null ? '—' : row.rating + ' / 5'}">Rating</td><td><strong th:text="${row.category}">Category</strong><small th:text="${row.priority}">Priority</small></td><td><span class="status-badge" th:text="${row.feedbackStatus}">NEW</span><small th:if="${row.archived}">Archived</small></td><td th:text="${row.assignedToUserId == null ? 'Unassigned' : 'User #' + row.assignedToUserId}">Owner</td><td class="actions"><a th:href="@{/feedback-management/cases/{feedbackId}/edit(feedbackId=${row.feedbackId})}">Open case</a><form th:if="${!row.archived}" th:action="@{/feedback-management/cases/{feedbackId}/archive(feedbackId=${row.feedbackId})}" method="post"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button type="submit" data-confirm="Archive this feedback case? The record will remain available for Admin.">Archive</button></form></td></tr>
+<tr th:if="${#lists.isEmpty(cases)}"><td colspan="7" class="empty-row">No feedback cases match this queue.</td></tr></tbody></table></div></section>
+</main><script th:src="@{/js/module.js}" defer></script></body></html>

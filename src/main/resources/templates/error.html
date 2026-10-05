@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b2239">
+    <title>Page unavailable | MediCare Pharmacy</title>
+    <link rel="stylesheet" th:href="@{/css/storefront.css}" href="/css/storefront.css">
+    <script defer th:src="@{/js/storefront.js}" src="/js/storefront.js"></script>
+</head>
+<body class="storefront-page">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div th:replace="~{fragments/storefront :: header}"></div>
+
+<main id="main-content" class="error-page-main content-width">
+    <section class="error-card" data-reveal>
+        <p class="error-code" th:text="${status != null ? 'ERROR ' + status : 'REQUEST NOT AVAILABLE'}">ERROR</p>
+        <h1 th:text="${status != null and status == 404 ? 'This page was not found.' : 'We could not complete that request.'}">We could not complete that request.</h1>
+        <p th:text="${message != null and !#strings.isEmpty(message) ? message : 'Please return to the MediCare home page and try again.'}">Please return to the MediCare home page and try again.</p>
+        <a class="action-button action-gold" th:href="@{/}">Return home <span>→</span></a>
+    </section>
+</main>
+
+<div th:replace="~{fragments/storefront :: footer}"></div>
+</body>
+</html>

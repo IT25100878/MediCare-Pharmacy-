@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#121212">
+    <meta name="description" content="Browse medicines currently available at MediCare Pharmacy.">
+    <title>Shop medicines | MediCare Pharmacy</title>
+    <link rel="stylesheet" th:href="@{/css/storefront.css}" href="/css/storefront.css">
+    <script defer th:src="@{/js/storefront.js}" src="/js/storefront.js"></script>
+</head>
+<body class="storefront-page catalog-page">
+<div th:replace="~{fragments/storefront :: header}"></div>
+
+<main>
+    <section class="page-banner">
+        <div class="content-width" data-reveal>
+            <p class="eyebrow"><span></span> MEDICINE CATALOGUE</p>
+            <h1>Browse available medicines.</h1>
+            <p>Only records with current, non-expired stock are displayed. Ask our pharmacy team if you need help choosing the right product.</p>
+        </div>
+    </section>
+
+    <section class="content-width catalog-layout">
+        <aside class="catalog-filter" data-reveal>
+            <p class="eyebrow dark"><span></span> FILTER RESULTS</p>
+            <h2>Find a medicine</h2>
+            <form th:action="@{/shop}" method="get" class="catalog-form">
+                <label for="catalogKeyword">Name, generic, or category</label>
+                <input id="catalogKeyword" name="keyword" type="search" th:value="${keyword}" placeholder="e.g. vitamin, pain relief">
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                    <option value="">All categories</option>
+                    <option th:each="item : ${categories}" th:value="${item}" th:text="${item}" th:selected="${item == selectedCategory}">Category</option>
+                </select>
+                <button class="action-button action-black full-width" type="submit">Apply filters <span>→</span></button>
+                <a class="clear-filter" th:if="${!#strings.isEmpty(keyword) || !#strings.isEmpty(selectedCategory)}" th:href="@{/shop}">Clear all filters</a>
+            </form>
+            <div class="catalog-help"><span>i</span><p>Need a prescription medicine? Upload the prescription and a Duty Pharmacist will review it.</p><a th:href="@{/prescription-request}">Upload prescription →</a></div>
+        </aside>
+
+        <div class="catalog-content">
+            <div class="catalog-summary" data-reveal>
+                <div><p class="eyebrow dark"><span></span> LIVE FROM INVENTORY</p><h2><span th:text="${availableCount}">0</span> medicine<span th:if="${availableCount != 1}">s</span> available</h2></div>
+                <p th:if="${!#strings.isEmpty(keyword) || !#strings.isEmpty(selectedCategory)}">Showing filtered results.</p>
+            </div>
+
+            <div class="medicine-grid" th:if="${!#lists.isEmpty(medicines)}">
+                <article class="medicine-card" th:each="medicine : ${medicines}" data-reveal>
+                    <div class="medicine-image" aria-hidden="true"><span th:text="${#strings.substring(medicine.medicineName, 0, 1)}">M</span><i></i><b>+</b></div>
+                    <div class="medicine-card-body">
+                        <p class="medicine-category" th:text="${#strings.isEmpty(medicine.category) ? 'General medicine' : medicine.category}">Category</p>
+                        <h3 th:text="${medicine.medicineName}">Medicine name</h3>
+                        <p class="generic-name" th:text="${#strings.isEmpty(medicine.genericName) ? 'Medicine details available from our team' : medicine.genericName}">Generic name</p>
+                        <div class="medicine-price"><span>Rs.</span> <strong th:text="${#numbers.formatDecimal(medicine.sellingPrice, 1, 'COMMA', 2, 'POINT')}">0.00</strong></div>
+                        <div class="medicine-bottom"><span class="stock-state"><i></i> In stock</span><a th:href="@{/prescription-request}" th:attr="aria-label=${'Request availability for ' + medicine.medicineName}">Request <span>→</span></a></div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="empty-catalog" th:if="${#lists.isEmpty(medicines)}" data-reveal>
+                <span aria-hidden="true">⌕</span>
+                <h3>No available medicines match this search.</h3>
+                <p>Try another name or category, or send a prescription request for the pharmacy team to review.</p>
+                <a class="action-button action-gold" th:href="@{/shop}">View all medicines <span>→</span></a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/storefront :: footer}"></div>
+</body>
+</html>

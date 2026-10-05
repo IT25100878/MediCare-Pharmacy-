@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Goods Received | MediCare Pharmacy</title>
+    <link rel="stylesheet" th:href="@{/css/module.css}">
+    <link rel="stylesheet" th:href="@{/css/procurement-receipts.css}">
+</head>
+<body class="module-page procurement-receipt-page">
+<div th:replace="~{fragments/module-header :: header}"></div>
+
+<main class="receipt-shell">
+    <section class="receipt-hero" data-reveal>
+        <div>
+            <p class="eyebrow">Procurement Coordinator</p>
+            <h1>Goods Received Centre</h1>
+            <p>Receive a supplier purchase order once. The system automatically updates the medicine batch, selected branch stock, medicine total, and stock audit trail.</p>
+        </div>
+        <div class="flow-chip-list" aria-label="Connected workflow">
+            <span>Purchase Order</span><b>→</b><span>Stock In</span><b>→</b><span>Inventory Audit</span>
+        </div>
+    </section>
+
+    <nav class="receipt-nav" aria-label="Procurement navigation" data-reveal>
+        <a th:href="@{/procurement/dashboard}">Procurement Dashboard</a>
+        <a th:href="@{/procurement/suppliers}">Supplier Management</a>
+        <a th:href="@{/procurement/promotions}">Promotion Campaigns</a>
+        <a th:href="@{/procurement/purchase-orders}">Purchase Orders</a>
+        <a class="active" th:href="@{/procurement/receipts}">Goods Received</a>
+    </nav>
+
+    <div th:if="${successMessage}" class="flash-message success" th:text="${successMessage}"></div>
+
+    <section class="receipt-grid">
+        <article class="receipt-card receive-card" data-reveal>
+            <div class="card-heading">
+                <div>
+                    <p class="eyebrow">Create</p>
+                    <h2>Receive purchase order</h2>
+                </div>
+                <span class="status-pill">Stock In</span>
+            </div>
+
+            <div th:if="${#lists.isEmpty(purchaseOrders)}" class="empty-state">
+                <strong>No receivable purchase orders yet.</strong>
+                <span>Create a supplier and purchase order first.</span>
+                <a th:href="@{/procurement/purchase-orders}">Open Purchase Orders</a>
+            </div>
+
+            <form th:if="${!#lists.isEmpty(purchaseOrders)}" th:action="@{/procurement/receipts}" th:object="${receiptForm}" method="post" class="receipt-form">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div th:if="${#fields.hasGlobalErrors()}" class="flash-message error">
+                    <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+                </div>
+
+                <label>Purchase order
+                    <select th:field="*{purchaseOrderId}">
+                        <option value="">Select purchase order</option>
+                        <option th:each="order : ${purchaseOrders}" th:value="${order.purchaseOrderId}"
+                                th:text="${order.purchaseOrderNumber + ' · ' + order.purchaseOrderStatus}"></option>
+                    </select>
+                    <small class="field-error" th:errors="*{purchaseOrderId}"></small>
+                </label>
+
+                <div class="form-row">
+                    <label>Medicine
+                        <select th:field="*{medicineId}">
+                            <option value="">Select medicine</option>
+                            <option th:each="medicine : ${medicines}" th:value="${medicine.medicineId}"
+                                    th:text="${medicine.medicineName + ' · ' + medicine.batchNumber}"></option>
+                        </select>
+                        <small class="field-error" th:errors="*{medicineId}"></small>
+                    </label>
+                    <label>Receiving branch
+                        <select th:field="*{branchId}">
+                            <option value="">Select branch</option>
+                            <option th:each="branch : ${branches}" th:value="${branch.branchId}" th:text="${branch.branchName}"></option>
+                        </select>
+                        <small class="field-error" th:errors="*{branchId}"></small>
+                    </label>
+                </div>
+
+                <div class="form-row three">
+                    <label>Supplier batch number
+                        <input th:field="*{batchNumber}" maxlength="80" placeholder="e.g. PCM-SEP-001">
+                        <small class="field-error" th:errors="*{batchNumber}"></small>
+                    </label>
+                    <label>Received quantity
+                        <input th:field="*{receivedQuantity}" type="number" min="1" placeholder="0">
+                        <small class="field-error" th:errors="*{receivedQuantity}"></small>
+                    </label>
+                    <label>Received date
+                        <input th:field="*{receivedDate}" type="date">
+                        <small class="field-error" th:errors="*{receivedDate}"></small>
+                    </label>
+                </div>
+
+                <div class="form-row three">
+                    <label>Purchase price (LKR)
+                        <input th:field="*{purchasePrice}" type="number" min="0" step="0.01">
+                        <small class="field-error" th:errors="*{purchasePrice}"></small>
+                    </label>
+                    <label>Selling price (LKR)
+                        <input th:field="*{sellingPrice}" type="number" min="0" step="0.01">
+                        <small class="field-error" th:errors="*{sellingPrice}"></small>
+                    </label>
+                    <label>Expiry date
+                        <input th:field="*{expiryDate}" type="date">
+                        <small class="field-error" th:errors="*{expiryDate}"></small>
+                    </label>
+                </div>
+
+                <label>Receiving notes <span>(optional)</span>
+                    <textarea th:field="*{notes}" rows="3" maxlength="500" placeholder="Invoice number, carton condition, or other receiving notes..."></textarea>
+                    <small class="field-error" th:errors="*{notes}"></small>
+                </label>
+
+                <button class="primary-action" type="submit">Receive &amp; update inventory <span>→</span></button>
+            </form>
+        </article>
+
+        <aside class="receipt-card rule-card" data-reveal>
+            <p class="eyebrow">Automatic controls</p>
+            <h2>What this action protects</h2>
+            <ul>
+                <li>Only pending or ordered purchase orders can be received.</li>
+                <li>A purchase order can be received only once.</li>
+                <li>Expiry date must be after the received date.</li>
+                <li>Selling price cannot be lower than purchase price.</li>
+                <li>Every stock increase creates a permanent audit record.</li>
+            </ul>
+            <a class="secondary-action" th:href="@{/inventory/medicines}">Open Medicine Records <span>↗</span></a>
+        </aside>
+    </section>
+
+    <section class="receipt-card history-card" data-reveal>
+        <div class="card-heading">
+            <div>
+                <p class="eyebrow">Read</p>
+                <h2>Recent received purchase orders</h2>
+            </div>
+            <span th:text="${#lists.size(receipts) + ' receipt(s)'}"></span>
+        </div>
+
+        <div class="table-wrap" th:if="${!#lists.isEmpty(receipts)}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Purchase order</th>
+                    <th>Medicine / batch</th>
+                    <th>Branch</th>
+                    <th>Quantity</th>
+                    <th>Expiry</th>
+                    <th>Received</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="receipt : ${receipts}">
+                    <td th:text="${receipt.purchaseOrder.purchaseOrderNumber}"></td>
+                    <td>
+                        <strong th:text="${receipt.medicine.medicineName}"></strong>
+                        <small th:text="${receipt.batchNumber}"></small>
+                    </td>
+                    <td th:text="${receipt.branch.branchName}"></td>
+                    <td th:text="${receipt.receivedQuantity}"></td>
+                    <td th:text="${receipt.expiryDate}"></td>
+                    <td th:text="${#temporals.format(receipt.receivedAt, 'dd MMM yyyy, HH:mm')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${#lists.isEmpty(receipts)}" class="empty-history">No purchase orders have been received through this workflow yet.</div>
+    </section>
+</main>
+
+<script th:src="@{/js/procurement-receipts.js}"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b334c">
+    <title>Feedback | MediCare Pharmacy</title>
+    <link rel="stylesheet" th:href="@{/css/feedback.css}" href="/css/feedback.css">
+    <script defer th:src="@{/js/feedback.js}" src="/js/feedback.js"></script>
+</head>
+<body class="feedback-page">
+<header class="feedback-header">
+    <a class="feedback-brand" th:href="@{/}" aria-label="MediCare Pharmacy home"><img class="feedback-logo" th:src="@{/images/medicare-for-all-logo.webp}" src="/images/medicare-for-all-logo.webp" alt="MediCare for All logo"><span class="feedback-brand-copy">Medi<span>Care</span><small>PHARMACY</small></span></a>
+    <div class="feedback-header-actions"><a th:href="@{/}" class="feedback-home">Home</a><a th:if="${currentRole == ''}" th:href="@{/login}" class="feedback-home">Staff portal</a><form th:if="${currentRole != ''}" th:action="@{/logout}" method="post"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button type="submit">Sign out</button></form></div>
+</header>
+
+<main class="feedback-main">
+    <section class="feedback-intro" data-reveal>
+        <p class="feedback-kicker"><span></span> CONTINUOUS IMPROVEMENT</p>
+        <h1>Your feedback helps the whole pharmacy work better.</h1>
+        <p>Share an idea, report a problem, or ask for follow-up. Your message becomes a tracked case in the Customer Feedback Manager workspace.</p>
+    </section>
+
+    <section class="feedback-layout">
+        <article class="feedback-card" data-reveal data-reveal-delay="70">
+            <div class="feedback-card-heading"><div><p class="section-label">SEND A MESSAGE</p><h2>What would you like to share?</h2></div><span class="feedback-icon">✦</span></div>
+            <div class="success-message" th:if="${feedbackSuccess}" th:text="${feedbackSuccess}" role="status"></div>
+
+            <form th:action="@{/feedback}" th:object="${feedbackForm}" method="post" class="feedback-form" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="feedback-field"><label for="customerName">Your name <b>*</b></label><input id="customerName" type="text" th:field="*{customerName}" maxlength="120" placeholder="Enter your name" required><small th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}"></small></div>
+                <div class="feedback-field"><label for="customerPhone">Phone / contact number</label><input id="customerPhone" type="text" th:field="*{customerPhone}" maxlength="30" placeholder="Optional contact number"><small th:if="${#fields.hasErrors('customerPhone')}" th:errors="*{customerPhone}"></small></div>
+                <div class="feedback-field"><label for="subject">Subject <b>*</b></label><input id="subject" type="text" th:field="*{subject}" maxlength="150" placeholder="e.g., Medicine stock suggestion" required><small th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}"></small></div>
+                <div class="feedback-field"><label for="category">Case category <b>*</b></label><select id="category" th:field="*{category}"><option value="GENERAL">General</option><option value="SERVICE">Service</option><option value="ORDER">Order / payment</option><option value="PRESCRIPTION">Prescription</option><option value="INVENTORY">Inventory</option><option value="COMPLAINT">Complaint</option></select><small th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></small></div>
+                <div class="feedback-field"><label for="priority">Priority <b>*</b></label><select id="priority" th:field="*{priority}"><option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="URGENT">Urgent</option></select><small th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}"></small></div>
+                <div class="feedback-field"><label for="rating">How is your experience? <b>*</b></label><select id="rating" th:field="*{rating}" required><option value="">Choose a rating</option><option value="5">5 — Excellent</option><option value="4">4 — Good</option><option value="3">3 — Average</option><option value="2">2 — Needs improvement</option><option value="1">1 — Poor</option></select><div class="rating-preview" id="ratingPreview" aria-live="polite"><span>☆☆☆☆☆</span><p>Choose a rating to share your experience.</p></div><small th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></small></div>
+                <div class="feedback-field"><label for="message">Message <b>*</b></label><textarea id="message" th:field="*{message}" maxlength="2000" rows="7" placeholder="Write your feedback here..." required></textarea><div class="message-meta"><span>Be clear and include helpful details.</span><span id="messageCount">0 / 2000</span></div><small th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></small></div>
+                <button type="submit" class="feedback-submit">Submit feedback <span>→</span></button>
+            </form>
+        </article>
+
+        <aside class="feedback-guide" data-reveal data-reveal-delay="160">
+            <div class="guide-icon">✓</div>
+            <p class="section-label">WHAT HAPPENS NEXT</p>
+            <h2>Your message becomes a case.</h2>
+            <ol><li><span>01</span><div><strong>Saved securely</strong><p>Your feedback is stored in SQL Server.</p></div></li><li><span>02</span><div><strong>Owned and prioritised</strong><p>The Feedback Manager assigns a status and case owner.</p></div></li><li><span>03</span><div><strong>Resolution tracked</strong><p>Response, progress, and satisfaction data remain visible.</p></div></li></ol>
+            <p class="guide-note">For account or data issues, include the page name and a short description of what happened.</p>
+        </aside>
+    </section>
+</main>
+</body>
+</html>

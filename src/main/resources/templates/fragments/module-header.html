@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="header">
+    <link rel="stylesheet" th:href="@{/css/app-shell.css}" href="/css/app-shell.css">
+
+    <aside class="app-sidebar" id="appSidebar" aria-label="MediCare workspace navigation">
+        <a class="app-brand" th:href="@{/}" aria-label="MediCare Pharmacy home">
+            <img th:src="@{/images/medicare-for-all-logo.webp}" src="/images/medicare-for-all-logo.webp" alt="MediCare for All logo">
+            <span><strong>MediCare</strong><small>PHARMACY PORTAL</small></span>
+        </a>
+
+        <div class="app-sidebar-scroll">
+            <section class="app-nav-group" th:if="${currentRole == 'ADMIN'}">
+                <p class="app-role-label"><span>AD</span> Admin control</p>
+                <a class="app-nav-link" th:href="@{/admin/dashboard}"><i>◫</i>Dashboard</a>
+                <a class="app-nav-link" th:href="@{/admin/users}"><i>U</i>User management</a>
+                <a class="app-nav-link" th:href="@{/admin/workflow-monitor}"><i>↗</i>Workflow monitor</a>
+                <a class="app-nav-link" th:href="@{/admin/feedback}"><i>F</i>Feedback overview</a>
+                <p class="app-section-label">System workspaces</p>
+                <a class="app-nav-link" th:href="@{/inventory/medicines}"><i>M</i>Medicine records</a>
+                <a class="app-nav-link" th:href="@{/cashier/checkout}"><i>C</i>Checkout &amp; invoices</a>
+                <a class="app-nav-link" th:href="@{/pharmacist/prescriptions}"><i>P</i>Prescription review</a>
+                <a class="app-nav-link" th:href="@{/operations/promotions}"><i>O</i>Campaigns &amp; operations</a>
+                <a class="app-nav-link" th:href="@{/procurement/suppliers}"><i>S</i>Procurement</a>
+                <a class="app-nav-link" th:href="@{/feedback-management/cases}"><i>FM</i>Feedback cases</a>
+            </section>
+
+            <section class="app-nav-group" th:if="${currentRole == 'INVENTORY_SUPERVISOR'}">
+                <p class="app-role-label"><span>IS</span> Inventory supervisor</p>
+                <a class="app-nav-link" th:href="@{/inventory/medicines}"><i>M</i>Medicine records</a>
+                <p class="app-nav-note">Add, view, edit and delete medicine records from one clean workspace.</p>
+            </section>
+
+            <section class="app-nav-group" th:if="${currentRole == 'CASHIER'}">
+                <p class="app-role-label"><span>CA</span> Cashier</p>
+                <a class="app-nav-link" th:href="@{/cashier/dashboard}"><i>◫</i>Dashboard</a>
+                <a class="app-nav-link" th:href="@{/cashier/orders}"><i>O</i>Customer orders</a>
+                <a class="app-nav-link" th:href="@{/cashier/checkout}"><i>₹</i>Smart checkout</a>
+                <a class="app-nav-link" th:href="@{/cashier/invoices}"><i>I</i>Invoices</a>
+            </section>
+
+            <section class="app-nav-group" th:if="${currentRole == 'DUTY_PHARMACIST'}">
+                <p class="app-role-label"><span>DP</span> Duty pharmacist</p>
+                <a class="app-nav-link" th:href="@{/pharmacist/dashboard}"><i>◫</i>Dashboard</a>
+                <a class="app-nav-link" th:href="@{/pharmacist/prescriptions?status=PENDING}"><i>!</i>Pending prescriptions</a>
+                <a class="app-nav-link" th:href="@{/pharmacist/prescriptions}"><i>P</i>Prescription review</a>
+            </section>
+
+            <section class="app-nav-group" th:if="${currentRole == 'OPERATIONS_MANAGER'}">
+                <p class="app-role-label"><span>OM</span> Operations manager</p>
+                <a class="app-nav-link" th:href="@{/operations/dashboard}"><i>◫</i>Dashboard</a>
+                <a class="app-nav-link" th:href="@{/operations/promotions}"><i>%</i>Promotions</a>
+                <a class="app-nav-link" th:href="@{/operations/branches}"><i>B</i>Branch management</a>
+                <a class="app-nav-link" th:href="@{/operations/overview}"><i>↗</i>Live overview</a>
+                <a class="app-nav-link" th:href="@{/operations/delivery-board}"><i>D</i>Delivery board</a>
+            </section>
+
+            <section class="app-nav-group" th:if="${currentRole == 'PROCUREMENT_COORDINATOR'}">
+                <p class="app-role-label"><span>PC</span> Procurement coordinator</p>
+                <a class="app-nav-link" th:href="@{/procurement/dashboard}"><i>◫</i>Dashboard</a>
+                <a class="app-nav-link" th:href="@{/procurement/suppliers}"><i>S</i>Supplier register</a>
+                <a class="app-nav-link" th:href="@{/procurement/promotions}"><i>%</i>Promotion campaigns</a>
+                <a class="app-nav-link" th:href="@{/procurement/purchase-orders}"><i>PO</i>Purchase orders</a>
+                <a class="app-nav-link" th:href="@{/procurement/receipts}"><i>GR</i>Goods received</a>
+            </section>
+
+            <section class="app-nav-group" th:if="${currentRole == 'CUSTOMER_FEEDBACK_MANAGER'}">
+                <p class="app-role-label"><span>FM</span> Feedback manager</p>
+                <a class="app-nav-link" th:href="@{/feedback-management/dashboard}"><i>◫</i>Dashboard</a>
+                <a class="app-nav-link" th:href="@{/feedback-management/cases?status=NEW}"><i>!</i>New cases</a>
+                <a class="app-nav-link" th:href="@{/feedback-management/cases}"><i>F</i>Case workspace</a>
+                <a class="app-nav-link" th:href="@{/feedback-management/analytics}"><i>↗</i>CSAT analytics</a>
+            </section>
+        </div>
+
+        <div class="app-sidebar-footer">
+            <a class="app-feedback-link" th:href="@{/feedback}"><span>✦</span> Send feedback</a>
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="app-signout"><span>↪</span> Sign out</button>
+            </form>
+        </div>
+    </aside>
+
+    <button class="app-sidebar-toggle" id="appSidebarToggle" type="button" aria-label="Open navigation" aria-controls="appSidebar" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div class="app-sidebar-backdrop" id="appSidebarBackdrop" hidden></div>
+    <script th:src="@{/js/app-shell.js}" src="/js/app-shell.js" defer></script>
+</th:block>
+</body>
+</html>

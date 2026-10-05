@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f8b8d">
+    <title>Edit Medicine | MediCare Pharmacy</title>
+    <link rel="stylesheet" th:href="@{/css/module.css}" href="/css/module.css">
+    <link rel="stylesheet" th:href="@{/css/inventory-clean.css}" href="/css/inventory-clean.css">
+</head>
+<body class="module-page inventory">
+<div th:replace="~{fragments/module-header :: header}"></div>
+
+<main class="edit-main inventory-edit-main">
+    <a class="back-link" th:href="@{/inventory/medicines}">← Back to medicine records</a>
+    <section class="edit-card inventory-edit-card">
+        <p class="role-label">Inventory Supervisor · Update</p>
+        <h1>Edit medicine</h1>
+        <p class="page-intro">Update the medicine details used across the pharmacy. Existing stock, batch, and expiry details are kept safely with the record.</p>
+        <div class="inventory-record-reference"><span>M</span><p><strong th:text="${medicine.medicineName}">Medicine</strong><small th:text="${'Batch ' + medicine.batchNumber + ' · ' + medicine.quantityInStock + ' units'}">Batch · stock</small></p></div>
+
+        <form th:action="@{/inventory/medicines/{medicineId}/edit(medicineId=${medicine.medicineId})}" th:object="${medicine}" method="post" class="record-form" novalidate>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <input type="hidden" th:field="*{batchNumber}">
+            <input type="hidden" th:field="*{quantityInStock}">
+            <input type="hidden" th:field="*{expiryDate}">
+            <div class="form-grid">
+                <label class="full-width">Medicine name <b>*</b><input th:field="*{medicineName}" maxlength="150" required><small th:errors="*{medicineName}"></small></label>
+                <label>Generic name<input th:field="*{genericName}" maxlength="150"><small th:errors="*{genericName}"></small></label>
+                <label>Category<input th:field="*{category}" maxlength="100"><small th:errors="*{category}"></small></label>
+                <label>Purchase price (LKR) <b>*</b><input th:field="*{purchasePrice}" type="number" min="0" step="0.01" required><small th:errors="*{purchasePrice}"></small></label>
+                <label>Selling price (LKR) <b>*</b><input th:field="*{sellingPrice}" type="number" min="0" step="0.01" required><small th:errors="*{sellingPrice}"></small></label>
+                <label>Reorder level <b>*</b><input th:field="*{reorderLevel}" type="number" min="0" required><small th:errors="*{reorderLevel}"></small></label>
+                <label class="checkbox-label"><input th:field="*{requiresPrescription}" type="checkbox"> Prescription required for this medicine</label>
+            </div>
+            <div class="form-actions"><button class="primary-button" type="submit">Save changes <span>→</span></button><a th:href="@{/inventory/medicines}">Cancel</a></div>
+        </form>
+    </section>
+</main>
+<script th:src="@{/js/module.js}" src="/js/module.js" defer></script>
+</body>
+</html>

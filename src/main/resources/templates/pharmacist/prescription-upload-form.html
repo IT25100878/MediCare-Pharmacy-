@@ -1,0 +1,455 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#121212">
+
+    <meta name="description"
+          content="Securely send a prescription request to MediCare Pharmacy.">
+
+    <title>Upload prescription | MediCare Pharmacy</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/storefront.css}"
+          href="/css/storefront.css">
+
+    <script defer
+            th:src="@{/js/storefront.js}"
+            src="/js/storefront.js">
+    </script>
+</head>
+
+
+<body class="storefront-page prescription-page">
+
+<div th:replace="~{fragments/storefront :: header}"></div>
+
+
+<main>
+
+    <!-- ====================================================== -->
+    <!-- PAGE BANNER -->
+    <!-- ====================================================== -->
+
+    <section class="page-banner prescription-banner">
+
+        <div class="content-width" data-reveal>
+
+            <p class="eyebrow">
+                <span></span>
+                SECURE PRESCRIPTION REQUEST
+            </p>
+
+            <h1>
+                Send it securely.
+                We’ll review it carefully.
+            </h1>
+
+            <p>
+                Your uploaded file is visible only to the
+                Duty Pharmacist role after it enters the
+                MediCare system.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ====================================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ====================================================== -->
+
+    <section class="content-width prescription-layout">
+
+
+        <!-- ================================================== -->
+        <!-- PROCESS STEPS -->
+        <!-- ================================================== -->
+
+        <div class="process-steps" data-reveal>
+
+            <article>
+
+                <span>1</span>
+
+                <div>
+                    <strong>Upload</strong>
+                    <small>
+                        Attach JPG, PNG, or PDF
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article>
+
+                <span>2</span>
+
+                <div>
+                    <strong>Review</strong>
+                    <small>
+                        Duty Pharmacist verifies it
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article>
+
+                <span>3</span>
+
+                <div>
+                    <strong>Follow up</strong>
+                    <small>
+                        Pharmacy team takes the next step
+                    </small>
+                </div>
+
+            </article>
+
+        </div>
+
+
+        <!-- ================================================== -->
+        <!-- PRESCRIPTION FORM CARD -->
+        <!-- ================================================== -->
+
+        <section class="prescription-card" data-reveal>
+
+
+            <!-- SUCCESS MESSAGE -->
+
+            <div th:if="${requestNumber}"
+                 class="submission-success"
+                 role="status">
+
+                <span aria-hidden="true">✓</span>
+
+                <div>
+
+                    <strong>
+                        Prescription request received
+                    </strong>
+
+                    <p>
+                        Your request number is
+
+                        <b th:text="${requestNumber}">
+                            WEB-00000000-XXXXXXXX
+                        </b>.
+
+                        The pharmacy team will review it
+                        before any medicine is released.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- UPLOAD ERROR -->
+
+            <div th:if="${uploadError}"
+                 class="form-error"
+                 role="alert">
+
+                <p th:text="${uploadError}">
+                    The prescription file must be
+                    5 MB or smaller.
+                </p>
+
+            </div>
+
+
+            <!-- FORM HEADING -->
+
+            <div class="form-heading">
+
+                <p class="eyebrow dark">
+                    <span></span>
+                    PRESCRIPTION DETAILS
+                </p>
+
+                <h2>
+                    Tell us who this is for.
+                </h2>
+
+                <p>
+                    Fields marked <b>*</b>
+                    are required.
+                </p>
+
+            </div>
+
+
+            <!-- ================================================== -->
+            <!-- FORM -->
+            <!-- ================================================== -->
+
+            <form
+                    th:action="@{/prescription-request}"
+                    th:object="${prescriptionRequest}"
+                    method="post"
+                    enctype="multipart/form-data"
+                    class="prescription-form"
+                    novalidate>
+
+
+                <!-- CSRF TOKEN -->
+
+                <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}">
+
+
+                <!-- GLOBAL VALIDATION ERRORS -->
+
+                <div class="form-error"
+                     th:if="${#fields.hasGlobalErrors()}"
+                     role="alert">
+
+                    <p
+                            th:each="error : ${#fields.globalErrors()}"
+                            th:text="${error}">
+
+                        File error
+
+                    </p>
+
+                </div>
+
+
+                <!-- ================================================== -->
+                <!-- NAME + PHONE -->
+                <!-- ================================================== -->
+
+                <div class="field-row">
+
+
+                    <!-- PATIENT NAME -->
+
+                    <div class="field-control">
+
+                        <label for="customerName">
+                            Patient full name
+                            <b>*</b>
+                        </label>
+
+                        <input
+                                id="customerName"
+                                th:field="*{customerName}"
+                                type="text"
+                                maxlength="120"
+                                autocomplete="name"
+                                placeholder="Enter full name"
+                                required>
+
+                        <small
+                                th:if="${#fields.hasErrors('customerName')}"
+                                th:errors="*{customerName}">
+
+                            Name error
+
+                        </small>
+
+                    </div>
+
+
+                    <!-- CONTACT PHONE -->
+
+                    <div class="field-control">
+
+                        <label for="customerPhone">
+                            Contact phone
+                            <b>*</b>
+                        </label>
+
+                        <input
+                                id="customerPhone"
+                                th:field="*{customerPhone}"
+                                type="tel"
+                                maxlength="30"
+                                autocomplete="tel"
+                                placeholder="e.g. +94 77 000 0000"
+                                required>
+
+                        <small
+                                th:if="${#fields.hasErrors('customerPhone')}"
+                                th:errors="*{customerPhone}">
+
+                            Phone error
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================== -->
+                <!-- PRESCRIPTION FILE -->
+                <!-- ================================================== -->
+
+                <div class="file-control">
+
+                    <label>
+                        Prescription file
+                        <b>*</b>
+                    </label>
+
+
+                    <!--
+                        IMPORTANT:
+                        Input is hidden by CSS.
+
+                        The label below has:
+                        for="prescriptionFile"
+
+                        So clicking the whole upload box
+                        opens the Windows file chooser.
+                    -->
+
+                    <input
+                            id="prescriptionFile"
+                            name="prescriptionFile"
+                            type="file"
+                            accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                            required>
+
+
+                    <!-- CLICKABLE UPLOAD BOX -->
+
+                    <label
+                            for="prescriptionFile"
+                            class="file-drop-copy"
+                            tabindex="0"
+                            role="button">
+
+                        <span aria-hidden="true">
+                            ↥
+                        </span>
+
+                        <p>
+
+                            <strong id="fileName">
+                                Choose a prescription file
+                            </strong>
+
+                            <small>
+                                JPG, PNG, or PDF · maximum 5 MB
+                            </small>
+
+                        </p>
+
+                    </label>
+
+                </div>
+
+
+                <!-- ================================================== -->
+                <!-- SUBMIT BUTTON -->
+                <!-- ================================================== -->
+
+                <button
+                        class="action-button action-gold"
+                        type="submit">
+
+                    Send for pharmacist review
+
+                    <span>→</span>
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ================================================== -->
+        <!-- SAFETY SECTION -->
+        <!-- ================================================== -->
+
+        <aside class="prescription-safety" data-reveal>
+
+            <p class="eyebrow dark">
+                <span></span>
+                BEFORE YOU SEND
+            </p>
+
+            <h2>
+                Help us review your request safely.
+            </h2>
+
+
+            <ul>
+
+                <li>
+
+                    <span>✓</span>
+
+                    Make sure the prescription image
+                    is clear and complete.
+
+                </li>
+
+
+                <li>
+
+                    <span>✓</span>
+
+                    Use the patient’s correct name
+                    and reachable phone number.
+
+                </li>
+
+
+                <li>
+
+                    <span>✓</span>
+
+                    Do not treat this upload as an
+                    automatic medicine approval.
+
+                </li>
+
+            </ul>
+
+
+            <div>
+
+                <strong>
+                    Need help?
+                </strong>
+
+                <p>
+                    Call +94 00 000 0000
+                    during pharmacy hours.
+                </p>
+
+            </div>
+
+        </aside>
+
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/storefront :: footer}"></div>
+
+
+</body>
+</html>
+```

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Edit Branch | MediCare Pharmacy</title><link rel="stylesheet" th:href="@{/css/module.css}" href="/css/module.css"></head>
+<body class="module-page operations">
+<div th:replace="~{fragments/module-header :: header}"></div>
+<main class="edit-main"><a class="back-link" th:href="@{/operations/branches}">← Back to branches</a>
+<section class="edit-card"><p class="role-label">Operations Manager · Update</p><h1>Edit pharmacy branch</h1>
+<form th:action="@{/operations/branches/{branchId}/edit(branchId=${branch.branchId})}" th:object="${branch}" method="post" class="record-form" novalidate>
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+<div class="form-grid"><label>Branch name<input type="text" th:field="*{branchName}" maxlength="150" required><small th:errors="*{branchName}"></small></label><label>Contact number<input type="text" th:field="*{contactNumber}" maxlength="30" required><small th:errors="*{contactNumber}"></small></label><label class="full-width">Address<textarea th:field="*{address}" maxlength="300" rows="3" required></textarea><small th:errors="*{address}"></small></label><label>Manager name<input type="text" th:field="*{managerName}" maxlength="120"><small th:errors="*{managerName}"></small></label><label class="checkbox-label"><input type="checkbox" th:field="*{active}"> Active branch</label></div>
+<div class="form-actions"><button class="primary-button" type="submit">Save changes</button><a th:href="@{/operations/branches}">Cancel</a></div>
+</form></section></main>
+</body></html>

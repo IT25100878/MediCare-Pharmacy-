@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cashier Checkout | MediCare Pharmacy</title>
+    <link rel="stylesheet" th:href="@{/css/module.css}">
+    <link rel="stylesheet" th:href="@{/css/cashier-checkout.css}">
+</head>
+<body class="module-page checkout-page">
+<div th:replace="~{fragments/module-header :: header}"></div>
+
+<main class="checkout-shell">
+    <section class="checkout-hero" data-reveal>
+        <div>
+            <p class="eyebrow">Cashier / Customer Service</p>
+            <h1>Verified Checkout Centre</h1>
+            <p>Complete one secure sale. The selected branch quantity and batch quantity reduce immediately, and the inventory audit records the exact customer order.</p>
+        </div>
+        <div class="flow-steps" aria-label="Checkout workflow">
+            <span>Approved Rx</span><b>→</b><span>Payment</span><b>→</b><span>Sale Out</span>
+        </div>
+    </section>
+
+    <nav class="role-nav">
+<a th:href="@{/cashier/dashboard}">Cashier Dashboard</a>
+<a th:href="@{/cashier/orders}">Customer Orders</a>
+<a class="active" th:href="@{/cashier/checkout}">Smart Checkout</a>
+<a th:href="@{/cashier/invoices}">Invoice Preview</a>
+<a th:href="@{/cashier/invoices}">Invoice History</a>
+<a th:href="@{/feedback}">Customer Feedback Capture</a>
+</nav>
+
+    <div th:if="${successMessage}" class="flash-message success" th:text="${successMessage}"></div>
+
+    <section class="checkout-grid">
+        <article class="checkout-card checkout-form-card" data-reveal>
+            <div class="card-heading">
+                <div>
+                    <p class="eyebrow">Create + Update</p>
+                    <h2>Complete a sale</h2>
+                </div>
+                <span class="paid-pill">Paid checkout</span>
+            </div>
+
+            <div th:if="${#lists.isEmpty(batches)}" class="empty-state">
+                <strong>No saleable batches are available.</strong>
+                <span>Receive stock first through the Procurement Goods Received Centre.</span>
+                <a th:href="@{/procurement/receipts}">Open Goods Received</a>
+            </div>
+
+            <form th:if="${!#lists.isEmpty(batches)}" th:action="@{/cashier/checkout}" th:object="${checkoutForm}" method="post" class="checkout-form">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div th:if="${#fields.hasGlobalErrors()}" class="flash-message error">
+                    <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+                </div>
+
+                <div class="form-row">
+                    <label>Customer full name
+                        <input id="customerName" th:field="*{customerName}" maxlength="120" placeholder="Customer full name">
+                        <small class="field-error" th:errors="*{customerName}"></small>
+                    </label>
+                    <label>Customer phone
+                        <input id="customerPhone" th:field="*{customerPhone}" maxlength="30" placeholder="077 123 4567">
+                        <small class="field-error" th:errors="*{customerPhone}"></small>
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Release stock from branch
+                        <select th:field="*{branchId}">
+                            <option value="">Select branch</option>
+                            <option th:each="branch : ${branches}" th:value="${branch.branchId}" th:text="${branch.branchName}"></option>
+                        </select>
+                        <small class="field-error" th:errors="*{branchId}"></small>
+                    </label>
+                    <label>Medicine batch
+                        <select id="batchId" th:field="*{batchId}">
+                            <option value="">Select batch</option>
+                            <option th:each="batch : ${batches}" th:value="${batch.batchId}"
+                                    th:attr="data-requires-prescription=${batch.medicine.requiresPrescription}"
+                                    th:text="${batch.medicine.medicineName + ' · ' + batch.batchNumber + ' · Qty ' + batch.availableQuantity + ' · LKR ' + batch.sellingPrice}"></option>
+                        </select>
+                        <small class="field-error" th:errors="*{batchId}"></small>
+                    </label>
+                </div>
+
+                <div class="prescription-hint" id="prescriptionHint" role="status">Select a medicine batch to check its prescription requirement.</div>
+
+                <div class="form-row">
+                    <label>Quantity
+                        <input th:field="*{quantity}" type="number" min="1" placeholder="0">
+                        <small class="field-error" th:errors="*{quantity}"></small>
+                    </label>
+                    <label>Payment method
+                        <select th:field="*{paymentMethod}">
+                            <option value="CASH">Cash</option>
+                            <option value="CARD">Card</option>
+                            <option value="ONLINE">Online payment</option>
+                        </select>
+                        <small class="field-error" th:errors="*{paymentMethod}"></small>
+                    </label>
+                </div>
+
+                <section id="prescriptionSection" class="prescription-section">
+                    <div>
+                        <p class="eyebrow">Pharmacist connection</p>
+                        <h3>Approved prescription required</h3>
+                        <p>The customer name and phone automatically fill from the selected verified prescription.</p>
+                    </div>
+                    <label>Approved prescription
+                        <select id="prescriptionId" th:field="*{prescriptionId}">
+                            <option value="">Select approved prescription</option>
+                            <option th:each="prescription : ${approvedPrescriptions}" th:value="${prescription.prescriptionId}"
+                                    th:attr="data-customer-name=${prescription.customerName},data-customer-phone=${prescription.customerPhone}"
+                                    th:text="${prescription.prescriptionNumber + ' · ' + prescription.customerName + ' · ' + prescription.customerPhone}"></option>
+                        </select>
+                    </label>
+                    <p th:if="${#lists.isEmpty(approvedPrescriptions)}" class="rx-empty">No approved, undispensed prescriptions are waiting.</p>
+                </section>
+
+                <button class="primary-action" type="submit">Complete paid checkout <span>→</span></button>
+            </form>
+        </article>
+
+        <aside class="checkout-card safety-card" data-reveal>
+            <p class="eyebrow">Built-in safety</p>
+            <h2>Checkout controls</h2>
+            <ul>
+                <li>Expired batches cannot be sold.</li>
+                <li>The selected branch must have enough quantity.</li>
+                <li>Prescription medicines require pharmacist approval.</li>
+                <li>A prescription cannot be dispensed twice.</li>
+                <li>Every completed sale creates a <strong>SALE_OUT</strong> audit record.</li>
+            </ul>
+            <a class="secondary-action" th:href="@{/inventory/medicines}">View medicine requirements <span>↗</span></a>
+        </aside>
+    </section>
+
+    <section class="checkout-card history-card" data-reveal>
+        <div class="card-heading">
+            <div>
+                <p class="eyebrow">Read</p>
+                <h2>Recent completed checkouts</h2>
+            </div>
+            <span th:text="${#lists.size(recentOrders) + ' order(s)'}"></span>
+        </div>
+        <div class="table-wrap" th:if="${!#lists.isEmpty(recentOrders)}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Invoice</th>
+                    <th>Customer</th>
+                    <th>Paid amount</th>
+                    <th>Payment</th>
+                    <th>Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${recentOrders}">
+                    <td th:text="${order.orderNumber}"></td>
+                    <td>
+                        <strong th:text="${order.customerName}"></strong>
+                        <small th:text="${order.customerPhone}"></small>
+                    </td>
+                    <td th:text="${'LKR ' + (order.totalAmount - order.discountAmount)}"></td>
+                    <td th:text="${order.paymentStatus}"></td>
+                    <td th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy, HH:mm')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${#lists.isEmpty(recentOrders)}" class="empty-history">No secure checkouts have been completed yet.</div>
+    </section>
+</main>
+
+<script th:src="@{/js/cashier-checkout.js}"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f8b8d">
+    <title>Medicine Records | MediCare Pharmacy</title>
+    <link rel="stylesheet" th:href="@{/css/module.css}" href="/css/module.css">
+    <link rel="stylesheet" th:href="@{/css/inventory-clean.css}" href="/css/inventory-clean.css">
+</head>
+<body class="module-page inventory">
+<div th:replace="~{fragments/module-header :: header}"></div>
+
+<main class="module-main inventory-main">
+    <section class="medicine-hero">
+        <div>
+            <p class="role-label">Inventory Supervisor</p>
+            <h1>Medicine records</h1>
+            <p>One clear workspace to add, view, edit, search, and delete medicine records. These records are used by pharmacist review, checkout, promotions, and procurement.</p>
+        </div>
+        <div class="medicine-live-state"><span></span><div><strong>Connected database</strong><small>SQL Server records are live</small></div></div>
+    </section>
+
+    <div class="notice success" th:if="${successMessage}" th:text="${successMessage}" role="status"></div>
+    <div class="notice error" th:if="${errorMessage}" th:text="${errorMessage}" role="alert"></div>
+
+    <section class="medicine-stat-row" aria-label="Medicine summary">
+        <article><span class="stat-icon">M</span><div><small>Medicine records</small><strong th:text="${#lists.size(medicines)}">0</strong></div></article>
+        <article><span class="stat-icon amber">!</span><div><small>Low-stock alerts</small><strong th:text="${lowStockCount}">0</strong></div></article>
+        <article><span class="stat-icon violet">◷</span><div><small>Expiry alerts</small><strong th:text="${expiringSoonCount}">0</strong></div></article>
+    </section>
+
+    <section class="two-panel-layout inventory-entry-layout">
+        <article class="form-card">
+            <div class="inventory-card-heading">
+                <div><p class="section-label">Create</p><h2>Add medicine</h2><p>Enter the opening record once. The medicine will be available to the connected pharmacy workflow.</p></div>
+                <span>+</span>
+            </div>
+            <form th:action="@{/inventory/medicines}" th:object="${medicine}" method="post" class="record-form" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="form-grid">
+                    <label class="full-width">Medicine name <b>*</b><input th:field="*{medicineName}" maxlength="150" placeholder="e.g. Paracetamol 500mg" required><small th:errors="*{medicineName}"></small></label>
+                    <label>Generic name<input th:field="*{genericName}" maxlength="150" placeholder="Optional"><small th:errors="*{genericName}"></small></label>
+                    <label>Category<input th:field="*{category}" maxlength="100" placeholder="e.g. Pain relief"><small th:errors="*{category}"></small></label>
+                    <label>Batch number <b>*</b><input th:field="*{batchNumber}" maxlength="80" placeholder="e.g. PCM-2601" required><small th:errors="*{batchNumber}"></small></label>
+                    <label>Expiry date <b>*</b><input th:field="*{expiryDate}" type="date" required><small th:errors="*{expiryDate}"></small></label>
+                    <label>Purchase price (LKR) <b>*</b><input th:field="*{purchasePrice}" type="number" min="0" step="0.01" required><small th:errors="*{purchasePrice}"></small></label>
+                    <label>Selling price (LKR) <b>*</b><input th:field="*{sellingPrice}" type="number" min="0" step="0.01" required><small th:errors="*{sellingPrice}"></small></label>
+                    <label>Opening quantity <b>*</b><input th:field="*{quantityInStock}" type="number" min="0" required><small th:errors="*{quantityInStock}"></small></label>
+                    <label>Reorder level <b>*</b><input th:field="*{reorderLevel}" type="number" min="0" required><small th:errors="*{reorderLevel}"></small></label>
+                    <label class="checkbox-label full-width"><input th:field="*{requiresPrescription}" type="checkbox"> Prescription required for this medicine</label>
+                </div>
+                <button class="primary-button" type="submit">Save medicine record <span>→</span></button>
+            </form>
+        </article>
+
+        <aside class="info-card inventory-help-card">
+            <p class="section-label">Simple workflow</p>
+            <h2>What happens next?</h2>
+            <ul>
+                <li>Duty Pharmacist sees prescription-required medicines.</li>
+                <li>Cashier can add available medicines to customer orders.</li>
+                <li>Operations can target this medicine in a campaign.</li>
+                <li>Procurement can use the record for purchase planning.</li>
+            </ul>
+            <p class="inventory-tip"><b>Tip:</b> Use a unique batch number and a future expiry date for every new medicine.</p>
+        </aside>
+    </section>
+
+    <section class="list-card medicine-list-card">
+        <div class="list-heading">
+            <div><p class="section-label">View · Edit · Delete</p><h2>Medicine list</h2><p class="list-subtitle">Search any medicine, open one edit form, or remove an unused record.</p></div>
+            <form th:action="@{/inventory/medicines}" method="get" class="search-form">
+                <label class="sr-only" for="keyword">Search medicines</label>
+                <input id="keyword" name="keyword" th:value="${keyword}" type="search" placeholder="Search name, generic name, or batch">
+                <button type="submit">Search</button>
+                <a th:if="${!#strings.isEmpty(keyword)}" th:href="@{/inventory/medicines}">Clear</a>
+            </form>
+        </div>
+        <div class="table-scroll">
+            <table>
+                <thead><tr><th>Medicine</th><th>Prices</th><th>Stock</th><th>Expiry</th><th>Type</th><th>Actions</th></tr></thead>
+                <tbody>
+                <tr th:each="item : ${medicines}">
+                    <td><strong th:text="${item.medicineName}">Medicine</strong><small th:text="${#strings.isEmpty(item.genericName) ? 'No generic name' : item.genericName}">Generic</small><small th:text="${#strings.isEmpty(item.category) ? 'Uncategorized' : item.category}">Category</small></td>
+                    <td><strong th:text="${'LKR ' + #numbers.formatDecimal(item.sellingPrice, 1, 'COMMA', 2, 'POINT')}">LKR 0.00</strong><small th:text="${'Buy: LKR ' + #numbers.formatDecimal(item.purchasePrice, 1, 'COMMA', 2, 'POINT')}">Buy</small></td>
+                    <td><span class="status-badge" th:classappend="${item.quantityInStock <= item.reorderLevel} ? ' inventory-warning' : ''" th:text="${item.quantityInStock + ' units'}">0 units</span><small th:text="${'Reorder at ' + item.reorderLevel}">Reorder</small></td>
+                    <td><strong th:text="${#temporals.format(item.expiryDate, 'dd MMM yyyy')}">Date</strong><small th:text="${'Batch ' + item.batchNumber}">Batch</small></td>
+                    <td><span class="status-badge" th:classappend="${item.requiresPrescription} ? ' inventory-rx' : ' inventory-otc'" th:text="${item.requiresPrescription ? 'Prescription required' : 'OTC'}">OTC</span></td>
+                    <td class="actions">
+                        <a th:href="@{/inventory/medicines/{medicineId}/edit(medicineId=${item.medicineId})}">Edit</a>
+                        <form th:action="@{/inventory/medicines/{medicineId}/delete(medicineId=${item.medicineId})}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" data-confirm="Permanently delete this medicine and its connected stock, receipt, order-item, transfer, and campaign records? This cannot be undone.">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(medicines)}"><td colspan="6" class="empty-row">No medicine records found. Add your first medicine above.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/module.js}" src="/js/module.js" defer></script>
+</body>
+</html>
