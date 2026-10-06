@@ -64,3 +64,11 @@ public class FeedbackManagementService {
         feedbackRepository.save(feedback);
     }
 
+    @Transactional
+    public void archive(Integer feedbackId) {
+        Feedback feedback = findById(feedbackId);
+        feedback.setArchived(true);
+        feedback.setUpdatedAt(LocalDateTime.now());
+        feedbackRepository.save(feedback);
+    }
+
