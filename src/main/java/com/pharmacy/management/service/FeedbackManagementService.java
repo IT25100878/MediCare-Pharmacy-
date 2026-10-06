@@ -72,3 +72,18 @@ public class FeedbackManagementService {
         feedbackRepository.save(feedback);
     }
 
+
+    public FeedbackAnalytics analytics() {
+        List<Feedback> cases = feedbackRepository.findByArchivedFalse(Sort.by(Sort.Direction.DESC, "createdAt"));
+        long newCases = cases.stream().filter(item -> "NEW".equals(item.getFeedbackStatus())).count();
+        long inProgress = cases.stream().filter(item -> "IN_PROGRESS".equals(item.getFeedbackStatus())).count();
+        long resolved = cases.stream().filter(item -> "RESOLVED".equals(item.getFeedbackStatus())).count();
+        long closed = cases.stream().filter(item -> "CLOSED".equals(item.getFeedbackStatus())).count();
+        long urgent = cases.stream().filter(item -> "URGENT".equals(item.getPriority())).count();
+        double average = cases.stream().map(Feedback::getRating).filter(value -> value != null)
+                .mapToInt(Integer::intValue).average().orElse(0.0);
+        return new FeedbackAnalytics(cases.size(), newCases, inProgress, resolved, closed, urgent, average);
+    }
+
+
+
