@@ -22,3 +22,26 @@ public class FeedbackService {
         this.feedbackRepository = feedbackRepository;
         this.appUserRepository = appUserRepository;
     }
+
+    @Transactional
+    public void submit(FeedbackForm form, String currentUserEmail) {
+        AppUser currentUser = currentUserEmail == null || currentUserEmail.isBlank()
+                ? null
+                : appUserRepository.findByEmailIgnoreCase(currentUserEmail).orElse(null);
+
+        Feedback feedback = new Feedback();
+        feedback.setUserId(currentUser == null ? null : currentUser.getUserId());
+        feedback.setCustomerName(form.getCustomerName().trim());
+        feedback.setCustomerPhone(form.getCustomerPhone() == null || form.getCustomerPhone().isBlank()
+                ? null : form.getCustomerPhone().trim());
+        feedback.setSubject(form.getSubject().trim());
+        feedback.setMessage(form.getMessage().trim());
+        feedback.setRating(form.getRating());
+        feedback.setCategory(form.getCategory());
+        feedback.setPriority(form.getPriority());
+        feedback.setFeedbackStatus("NEW");
+        feedback.setArchived(false);
+
+        feedbackRepository.save(feedback);
+    }
+}
