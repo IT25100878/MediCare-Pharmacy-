@@ -36,3 +36,15 @@ public class PurchaseOrderController {
         model.addAttribute("purchaseOrder", new PurchaseOrder());
         return "procurement/purchase-orders";
     }
+
+    @PostMapping("/purchase-orders")
+    public String create(@Valid @ModelAttribute("purchaseOrder") PurchaseOrder purchaseOrder,
+                         BindingResult bindingResult,
+                         Authentication authentication,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
+        addExpectedDateError(purchaseOrder, bindingResult);
+        if (bindingResult.hasErrors()) {
+            populateList(model, null);
+            return "procurement/purchase-orders";
+        }
