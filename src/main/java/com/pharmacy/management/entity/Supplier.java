@@ -110,3 +110,23 @@ public class Supplier {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public String getBusinessRegistrationId() { return businessRegistrationId; }
+    public void setBusinessRegistrationId(String businessRegistrationId) { this.businessRegistrationId = businessRegistrationId; }
+    public String getMedicineCategory() { return medicineCategory; }
+    public void setMedicineCategory(String medicineCategory) { this.medicineCategory = medicineCategory; }
+    public String getPaymentTerms() { return paymentTerms; }
+    public void setPaymentTerms(String paymentTerms) { this.paymentTerms = paymentTerms; }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+}
