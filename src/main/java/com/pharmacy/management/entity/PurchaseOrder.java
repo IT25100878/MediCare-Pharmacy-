@@ -43,4 +43,17 @@ public class PurchaseOrder {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "ExpectedDate")
     private LocalDate expectedDate;
-}
+
+    @NotNull(message = "Total amount is required.")
+    @DecimalMin(value = "0.00", message = "Total amount cannot be negative.")
+    @Column(name = "TotalAmount", nullable = false, precision = 12, scale = 2)
+    private BigDecimal totalAmount = BigDecimal.ZERO;
+
+    @NotBlank(message = "Purchase order status is required.")
+    @Pattern(regexp = "PENDING|ORDERED|RECEIVED|CANCELLED", message = "Choose a valid purchase order status.")
+    @Column(name = "PurchaseOrderStatus", nullable = false, length = 20)
+    private String purchaseOrderStatus = "PENDING";
+
+    @Column(name = "ProcurementUserId")
+    private Integer procurementUserId;
+
