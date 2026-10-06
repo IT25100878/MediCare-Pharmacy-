@@ -39,3 +39,30 @@ public class PurchaseOrderReceipt {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "BranchId", nullable = false)
     private PharmacyBranch branch;
+
+    @Column(name = "BatchNumber", nullable = false, length = 80)
+    private String batchNumber;
+
+    @Column(name = "ReceivedQuantity", nullable = false)
+    private Integer receivedQuantity;
+
+    @Column(name = "PurchasePrice", nullable = false, precision = 12, scale = 2)
+    private BigDecimal purchasePrice;
+
+    @Column(name = "SellingPrice", nullable = false, precision = 12, scale = 2)
+    private BigDecimal sellingPrice;
+
+    @Column(name = "ReceivedDate", nullable = false)
+    private LocalDate receivedDate;
+
+    @Column(name = "ExpiryDate", nullable = false)
+    private LocalDate expiryDate;
+
+    @Column(name = "Notes", length = 500)
+    private String notes;
+
+    @Column(name = "ReceivedByUserId")
+    private Integer receivedByUserId;
+
+    @Column(name = "ReceivedAt", insertable = false, updatable = false)
+    private LocalDateTime receivedAt;
