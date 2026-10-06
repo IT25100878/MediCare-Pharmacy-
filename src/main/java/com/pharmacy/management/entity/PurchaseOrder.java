@@ -19,3 +19,28 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "PurchaseOrders", schema = "dbo")
 public class PurchaseOrder {
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PurchaseOrderId")
+    private Integer purchaseOrderId;
+
+    @NotBlank(message = "Purchase order number is required.")
+    @Size(max = 30, message = "Purchase order number cannot exceed 30 characters.")
+    @Column(name = "PurchaseOrderNumber", nullable = false, length = 30)
+    private String purchaseOrderNumber;
+
+    @NotNull(message = "Please choose a supplier.")
+    @Column(name = "SupplierId")
+    private Integer supplierId;
+
+    @NotNull(message = "Order date is required.")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @Column(name = "OrderDate", nullable = false)
+    private LocalDate orderDate = LocalDate.now();
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @Column(name = "ExpectedDate")
+    private LocalDate expectedDate;
+}
