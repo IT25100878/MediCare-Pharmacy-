@@ -49,3 +49,23 @@ public class ProcurementReceiptController {
             populateModel(model);
             return "procurement/receipts";
         }
+
+        try {
+            procurementReceiptService.receivePurchaseOrder(receiptForm, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Purchase order received. Batch stock, branch stock, medicine summary, and audit history were updated.");
+            return "redirect:/procurement/receipts";
+        } catch (IllegalArgumentException exception) {
+            bindingResult.reject("receipt.receive.failed", exception.getMessage());
+            populateModel(model);
+            return "procurement/receipts";
+        }
+    }
+
+    private void populateModel(Model model) {
+        model.addAttribute("purchaseOrders", procurementReceiptService.findReceivablePurchaseOrders());
+        model.addAttribute("medicines", medicineService.findAll(""));
+        model.addAttribute("branches", inventoryWorkflowService.getActiveBranches());
+        model.addAttribute("receipts", procurementReceiptService.findAllReceipts());
+    }
+}
