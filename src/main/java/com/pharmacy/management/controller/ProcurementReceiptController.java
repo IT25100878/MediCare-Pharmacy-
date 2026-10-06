@@ -31,3 +31,21 @@ public class ProcurementReceiptController {
         this.medicineService = medicineService;
         this.inventoryWorkflowService = inventoryWorkflowService;
     }
+
+    @GetMapping("/receipts")
+    public String receipts(Model model) {
+        populateModel(model);
+        model.addAttribute("receiptForm", new PurchaseOrderReceiptForm());
+        return "procurement/receipts";
+    }
+
+    @PostMapping("/receipts")
+    public String receive(@Valid @ModelAttribute("receiptForm") PurchaseOrderReceiptForm receiptForm,
+                          BindingResult bindingResult,
+                          Authentication authentication,
+                          Model model,
+                          RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            populateModel(model);
+            return "procurement/receipts";
+        }
