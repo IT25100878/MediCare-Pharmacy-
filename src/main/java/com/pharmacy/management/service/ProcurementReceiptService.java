@@ -162,3 +162,25 @@ public class ProcurementReceiptService {
         stockTransactionRepository.save(transaction);
     }
 
+    private void createReceipt(PurchaseOrder purchaseOrder,
+                               Medicine medicine,
+                               MedicineBatch batch,
+                               PharmacyBranch branch,
+                               PurchaseOrderReceiptForm form,
+                               Integer userId) {
+        PurchaseOrderReceipt receipt = new PurchaseOrderReceipt();
+        receipt.setPurchaseOrder(purchaseOrder);
+        receipt.setMedicine(medicine);
+        receipt.setBatch(batch);
+        receipt.setBranch(branch);
+        receipt.setBatchNumber(batch.getBatchNumber());
+        receipt.setReceivedQuantity(form.getReceivedQuantity());
+        receipt.setPurchasePrice(form.getPurchasePrice());
+        receipt.setSellingPrice(form.getSellingPrice());
+        receipt.setReceivedDate(form.getReceivedDate());
+        receipt.setExpiryDate(form.getExpiryDate());
+        receipt.setNotes(trimToNull(form.getNotes()));
+        receipt.setReceivedByUserId(userId);
+        receiptRepository.save(receipt);
+    }
+
