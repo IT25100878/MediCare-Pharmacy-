@@ -26,3 +26,19 @@ public class FeedbackManagementService {
         this.feedbackRepository = feedbackRepository;
         this.appUserRepository = appUserRepository;
     }
+
+    public List<Feedback> findCases(String keyword, String status, boolean includeArchived) {
+        List<Feedback> cases = includeArchived
+                ? feedbackRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
+                : feedbackRepository.findByArchivedFalse(Sort.by(Sort.Direction.DESC, "createdAt"));
+        String search = keyword == null ? "" : keyword.trim().toLowerCase(Locale.ROOT);
+        String selectedStatus = status == null ? "" : status.trim().toUpperCase(Locale.ROOT);
+        return cases.stream()
+                .filter(item -> selectedStatus.isBlank() || selectedStatus.equals(item.getFeedbackStatus()))
+                .filter(item -> search.isBlank()
+                        || contains(item.getCustomerName(), search)
+                        || contains(item.getSubject(), search)
+                        || contains(item.getMessage(), search)
+                        || contains(item.getCategory(), search))
+                .toList();
+    }
