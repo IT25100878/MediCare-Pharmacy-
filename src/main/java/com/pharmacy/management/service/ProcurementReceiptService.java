@@ -39,3 +39,24 @@ public class ProcurementReceiptService {
     private final StockTransactionRepository stockTransactionRepository;
     private final CurrentUserService currentUserService;
     private final MedicineService medicineService;
+
+
+    public ProcurementReceiptService(PurchaseOrderRepository purchaseOrderRepository,
+                                     PurchaseOrderReceiptRepository receiptRepository,
+                                     MedicineRepository medicineRepository,
+                                     MedicineBatchRepository medicineBatchRepository,
+                                     PharmacyBranchRepository pharmacyBranchRepository,
+                                     BranchStockRepository branchStockRepository,
+                                     StockTransactionRepository stockTransactionRepository,
+                                     CurrentUserService currentUserService,
+                                     MedicineService medicineService) {
+        this.purchaseOrderRepository = purchaseOrderRepository;
+        this.receiptRepository = receiptRepository;
+        this.medicineRepository = medicineRepository;
+        this.medicineBatchRepository = medicineBatchRepository;
+        this.pharmacyBranchRepository = pharmacyBranchRepository;
+        this.branchStockRepository = branchStockRepository;
+        this.stockTransactionRepository = stockTransactionRepository;
+        this.currentUserService = currentUserService;
+        this.medicineService = medicineService;
+    }
