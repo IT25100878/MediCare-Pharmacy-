@@ -48,3 +48,48 @@ public class PurchaseOrderController {
             populateList(model, null);
             return "procurement/purchase-orders";
         }
+
+        try {
+            purchaseOrderService.create(purchaseOrder, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Purchase order was created successfully.");
+            return "redirect:/procurement/purchase-orders";
+        } catch (DataIntegrityViolationException exception) {
+            bindingResult.rejectValue("purchaseOrderNumber", "purchaseOrder.duplicate",
+                    "This purchase order number already exists.");
+            populateList(model, null);
+            return "procurement/purchase-orders";
+        }
+    }
+
+    @GetMapping("/purchase-orders/{purchaseOrderId}/edit")
+    public String edit(@PathVariable Integer purchaseOrderId, Model model) {
+        model.addAttribute("purchaseOrder", purchaseOrderService.findById(purchaseOrderId));
+        model.addAttribute("suppliers", purchaseOrderService.findAllSuppliers());
+        return "procurement/purchase-order-form";
+    }
+
+    @PostMapping("/purchase-orders/{purchaseOrderId}/edit")
+    public String update(@PathVariable Integer purchaseOrderId,
+                         @Valid @ModelAttribute("purchaseOrder") PurchaseOrder purchaseOrder,
+                         BindingResult bindingResult,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
+        addExpectedDateError(purchaseOrder, bindingResult);
+        if (bindingResult.hasErrors()) {
+            purchaseOrder.setPurchaseOrderId(purchaseOrderId);
+            model.addAttribute("suppliers", purchaseOrderService.findAllSuppliers());
+            return "procurement/purchase-order-form";
+        }
+
+        try {
+            purchaseOrderService.update(purchaseOrderId, purchaseOrder);
+            redirectAttributes.addFlashAttribute("successMessage", "Purchase order was updated successfully.");
+            return "redirect:/procurement/purchase-orders";
+        } catch (DataIntegrityViolationException exception) {
+            bindingResult.rejectValue("purchaseOrderNumber", "purchaseOrder.duplicate",
+                    "This purchase order number already exists.");
+            purchaseOrder.setPurchaseOrderId(purchaseOrderId);
+            model.addAttribute("suppliers", purchaseOrderService.findAllSuppliers());
+            return "procurement/purchase-order-form";
+        }
+    }
