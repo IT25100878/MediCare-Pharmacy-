@@ -66,3 +66,31 @@ public class PurchaseOrderReceipt {
 
     @Column(name = "ReceivedAt", insertable = false, updatable = false)
     private LocalDateTime receivedAt;
+
+    public Integer getPurchaseOrderReceiptId() { return purchaseOrderReceiptId; }
+    public PurchaseOrder getPurchaseOrder() { return purchaseOrder; }
+    public void setPurchaseOrder(PurchaseOrder purchaseOrder) { this.purchaseOrder = purchaseOrder; }
+    public Medicine getMedicine() { return medicine; }
+    public void setMedicine(Medicine medicine) { this.medicine = medicine; }
+    public MedicineBatch getBatch() { return batch; }
+    public void setBatch(MedicineBatch batch) { this.batch = batch; }
+    public PharmacyBranch getBranch() { return branch; }
+    public void setBranch(PharmacyBranch branch) { this.branch = branch; }
+    public String getBatchNumber() { return batchNumber; }
+    public void setBatchNumber(String batchNumber) { this.batchNumber = batchNumber; }
+    public Integer getReceivedQuantity() { return receivedQuantity; }
+    public void setReceivedQuantity(Integer receivedQuantity) { this.receivedQuantity = receivedQuantity; }
+    public BigDecimal getPurchasePrice() { return purchasePrice; }
+    public void setPurchasePrice(BigDecimal purchasePrice) { this.purchasePrice = purchasePrice; }
+    public BigDecimal getSellingPrice() { return sellingPrice; }
+    public void setSellingPrice(BigDecimal sellingPrice) { this.sellingPrice = sellingPrice; }
+    public LocalDate getReceivedDate() { return receivedDate; }
+    public void setReceivedDate(LocalDate receivedDate) { this.receivedDate = receivedDate; }
+    public LocalDate getExpiryDate() { return expiryDate; }
+    public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+    public Integer getReceivedByUserId() { return receivedByUserId; }
+    public void setReceivedByUserId(Integer receivedByUserId) { this.receivedByUserId = receivedByUserId; }
+    public LocalDateTime getReceivedAt() { return receivedAt; }
+}
