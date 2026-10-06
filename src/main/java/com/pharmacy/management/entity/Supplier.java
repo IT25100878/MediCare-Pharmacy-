@@ -44,3 +44,21 @@ public class Supplier {
     @Size(max = 300, message = "Address cannot exceed 300 characters.")
     @Column(name = "Address", length = 300)
     private String address;
+
+    @Size(max = 80, message = "Business registration ID cannot exceed 80 characters.")
+    @Column(name = "BusinessRegistrationId", length = 80)
+    private String businessRegistrationId;
+
+    @Size(max = 100, message = "Medicine category cannot exceed 100 characters.")
+    @Column(name = "MedicineCategory", length = 100)
+    private String medicineCategory;
+
+    @Size(max = 150, message = "Payment terms cannot exceed 150 characters.")
+    @Column(name = "PaymentTerms", length = 150)
+    private String paymentTerms;
+
+    @Column(name = "IsActive", nullable = false)
+    private boolean active = true;
+
+    @Column(name = "CreatedAt", insertable = false, updatable = false)
+    private LocalDateTime createdAt;
