@@ -30,3 +30,8 @@ public class SupplierService {
                         text, text, text, sort
                 );
     }
+
+    public Supplier findById(Integer supplierId) {
+        return supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Supplier not found."));
+    }
