@@ -16,5 +16,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@Controller
+@RequestMapping("/procurement")
 public class ProcurementReceiptController {
-}
+
+    private final ProcurementReceiptService procurementReceiptService;
+    private final MedicineService medicineService;
+    private final InventoryWorkflowService inventoryWorkflowService;
+
+    public ProcurementReceiptController(ProcurementReceiptService procurementReceiptService,
+                                        MedicineService medicineService,
+                                        InventoryWorkflowService inventoryWorkflowService) {
+        this.procurementReceiptService = procurementReceiptService;
+        this.medicineService = medicineService;
+        this.inventoryWorkflowService = inventoryWorkflowService;
+    }
