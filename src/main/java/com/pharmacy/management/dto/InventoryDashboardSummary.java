@@ -19,3 +19,10 @@ public class InventoryDashboardSummary {
         this.expiryAlertCount = expiryAlertCount;
         this.inTransitTransferCount = inTransitTransferCount;
     }
+
+    public long getMedicineCount() { return medicineCount; }
+    public long getBatchCount() { return batchCount; }
+    public long getLowStockCount() { return lowStockCount; }
+    public long getExpiryAlertCount() { return expiryAlertCount; }
+    public long getInTransitTransferCount() { return inTransitTransferCount; }
+}
