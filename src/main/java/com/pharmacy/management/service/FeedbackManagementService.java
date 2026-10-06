@@ -42,3 +42,8 @@ public class FeedbackManagementService {
                         || contains(item.getCategory(), search))
                 .toList();
     }
+
+    public Feedback findById(Integer feedbackId) {
+        return feedbackRepository.findById(feedbackId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Feedback case was not found."));
+    }
