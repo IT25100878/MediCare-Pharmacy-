@@ -90,4 +90,10 @@ public class FeedbackManagementService {
     }
 
 
+    private String trimToNull(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+}
+
+
 
