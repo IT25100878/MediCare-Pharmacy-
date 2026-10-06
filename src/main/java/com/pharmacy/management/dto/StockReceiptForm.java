@@ -46,3 +46,23 @@ public class StockReceiptForm {
 
     @Size(max = 500, message = "Notes cannot exceed 500 characters.")
     private String notes;
+
+    public Integer getMedicineId() { return medicineId; }
+    public void setMedicineId(Integer medicineId) { this.medicineId = medicineId; }
+    public Integer getBranchId() { return branchId; }
+    public void setBranchId(Integer branchId) { this.branchId = branchId; }
+    public String getBatchNumber() { return batchNumber; }
+    public void setBatchNumber(String batchNumber) { this.batchNumber = batchNumber; }
+    public BigDecimal getPurchasePrice() { return purchasePrice; }
+    public void setPurchasePrice(BigDecimal purchasePrice) { this.purchasePrice = purchasePrice; }
+    public BigDecimal getSellingPrice() { return sellingPrice; }
+    public void setSellingPrice(BigDecimal sellingPrice) { this.sellingPrice = sellingPrice; }
+    public Integer getReceivedQuantity() { return receivedQuantity; }
+    public void setReceivedQuantity(Integer receivedQuantity) { this.receivedQuantity = receivedQuantity; }
+    public LocalDate getReceivedDate() { return receivedDate; }
+    public void setReceivedDate(LocalDate receivedDate) { this.receivedDate = receivedDate; }
+    public LocalDate getExpiryDate() { return expiryDate; }
+    public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+}
