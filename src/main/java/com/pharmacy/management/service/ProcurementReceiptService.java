@@ -135,3 +135,13 @@ public class ProcurementReceiptService {
         batch.setCreatedByUserId(userId);
         return medicineBatchRepository.save(batch);
     }
+
+    private BranchStock createEmptyBranchStock(PharmacyBranch branch, MedicineBatch batch) {
+        BranchStock stock = new BranchStock();
+        stock.setBranch(branch);
+        stock.setBatch(batch);
+        stock.setQuantityInStock(0);
+        stock.setUpdatedAt(LocalDateTime.now());
+        return stock;
+    }
+
