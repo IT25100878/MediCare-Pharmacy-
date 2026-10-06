@@ -60,3 +60,25 @@ public class ProcurementReceiptService {
         this.currentUserService = currentUserService;
         this.medicineService = medicineService;
     }
+
+    public List<PurchaseOrder> findReceivablePurchaseOrders() {
+        return purchaseOrderRepository.findAll(Sort.by(Sort.Direction.DESC, "orderDate")).stream()
+                .filter(order -> !"RECEIVED".equals(order.getPurchaseOrderStatus()))
+                .filter(order -> !"CANCELLED".equals(order.getPurchaseOrderStatus()))
+                .filter(order -> !receiptRepository.existsByPurchaseOrder_PurchaseOrderId(order.getPurchaseOrderId()))
+                .toList();
+    }
+
+    public List<PurchaseOrderReceipt> findAllReceipts() {
+        return receiptRepository.findAllByOrderByReceivedAtDesc();
+    }
+
+    @Transactional
+    public void receivePurchaseOrder(PurchaseOrderReceiptForm form, String currentUserEmail) {
+        validateFormValues(form);
+
+        PurchaseOrder purchaseOrder = requirePurchaseOrder(form.getPurchaseOrderId());
+        validateReceivablePurchaseOrder(purchaseOrder);
+        if (receiptRepository.existsByPurchaseOrder_PurchaseOrderId(purchaseOrder.getPurchaseOrderId())) {
+            throw new IllegalArgumentException("This purchase order has already been received.");
+        }
