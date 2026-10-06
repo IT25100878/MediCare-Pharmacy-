@@ -13,4 +13,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class PurchaseOrderReceiptForm {
-}
+
+    @NotNull(message = "Choose a purchase order.")
+    private Integer purchaseOrderId;
+
+    @NotNull(message = "Choose a medicine.")
+    private Integer medicineId;
+
+    @NotNull(message = "Choose the receiving branch.")
+    private Integer branchId;
