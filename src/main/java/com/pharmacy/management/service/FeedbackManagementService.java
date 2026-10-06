@@ -47,3 +47,10 @@ public class FeedbackManagementService {
         return feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Feedback case was not found."));
     }
+
+    @Transactional
+    public void update(Integer feedbackId, FeedbackCaseForm form) {
+        Feedback feedback = findById(feedbackId);
+        if (form.getAssignedToUserId() != null && !appUserRepository.existsById(form.getAssignedToUserId())) {
+            throw new IllegalArgumentException("The selected case owner no longer exists.");
+        }
