@@ -11,5 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+@Service
 public class FeedbackService {
-}
+
+    private final FeedbackRepository feedbackRepository;
+    private final AppUserRepository appUserRepository;
+
+    public FeedbackService(FeedbackRepository feedbackRepository,
+                           AppUserRepository appUserRepository) {
+        this.feedbackRepository = feedbackRepository;
+        this.appUserRepository = appUserRepository;
+    }
