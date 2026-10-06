@@ -27,5 +27,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class ProcurementReceiptService {
-}
+
+    private final PurchaseOrderRepository purchaseOrderRepository;
+    private final PurchaseOrderReceiptRepository receiptRepository;
+    private final MedicineRepository medicineRepository;
+    private final MedicineBatchRepository medicineBatchRepository;
+    private final PharmacyBranchRepository pharmacyBranchRepository;
+    private final BranchStockRepository branchStockRepository;
+    private final StockTransactionRepository stockTransactionRepository;
+    private final CurrentUserService currentUserService;
+    private final MedicineService medicineService;
