@@ -44,3 +44,18 @@ public class SupplierService {
         supplier.setPaymentTerms(trimToNull(supplier.getPaymentTerms()));
         supplierRepository.save(supplier);
     }
+
+    @Transactional
+    public void update(Integer supplierId, Supplier formSupplier) {
+        Supplier existing = findById(supplierId);
+        existing.setSupplierName(formSupplier.getSupplierName());
+        existing.setContactPerson(formSupplier.getContactPerson());
+        existing.setContactNumber(formSupplier.getContactNumber());
+        existing.setEmail(formSupplier.getEmail());
+        existing.setAddress(formSupplier.getAddress());
+        existing.setBusinessRegistrationId(trimToNull(formSupplier.getBusinessRegistrationId()));
+        existing.setMedicineCategory(trimToNull(formSupplier.getMedicineCategory()));
+        existing.setPaymentTerms(trimToNull(formSupplier.getPaymentTerms()));
+        existing.setActive(formSupplier.isActive());
+        supplierRepository.save(existing);
+    }
