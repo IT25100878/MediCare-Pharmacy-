@@ -44,3 +44,11 @@ public class PurchaseOrderService {
         return purchaseOrderRepository.findById(purchaseOrderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Purchase order not found."));
     }
+
+    @Transactional
+    public void create(PurchaseOrder purchaseOrder, String currentUserEmail) {
+        requireSupplier(purchaseOrder.getSupplierId());
+        purchaseOrder.setPurchaseOrderId(null);
+        purchaseOrder.setProcurementUserId(currentUserService.getUserId(currentUserEmail));
+        purchaseOrderRepository.save(purchaseOrder);
+    }
