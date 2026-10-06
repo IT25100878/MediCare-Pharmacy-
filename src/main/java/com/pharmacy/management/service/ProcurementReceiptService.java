@@ -120,3 +120,18 @@ public class ProcurementReceiptService {
         purchaseOrderRepository.save(purchaseOrder);
         medicineService.refreshMedicineStockSummary(medicine.getMedicineId());
     }
+
+    private MedicineBatch createBatch(PurchaseOrderReceiptForm form, Medicine medicine, Integer userId) {
+        MedicineBatch batch = new MedicineBatch();
+        batch.setMedicine(medicine);
+        batch.setBatchNumber(form.getBatchNumber().trim());
+        batch.setPurchasePrice(form.getPurchasePrice());
+        batch.setSellingPrice(form.getSellingPrice());
+        batch.setInitialQuantity(0);
+        batch.setAvailableQuantity(0);
+        batch.setReceivedDate(form.getReceivedDate());
+        batch.setExpiryDate(form.getExpiryDate());
+        batch.setActive(true);
+        batch.setCreatedByUserId(userId);
+        return medicineBatchRepository.save(batch);
+    }
