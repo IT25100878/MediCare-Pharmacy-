@@ -57,3 +57,69 @@ public class PurchaseOrder {
     @Column(name = "ProcurementUserId")
     private Integer procurementUserId;
 
+    public Integer getPurchaseOrderId() {
+        return purchaseOrderId;
+    }
+
+    public void setPurchaseOrderId(Integer purchaseOrderId) {
+        this.purchaseOrderId = purchaseOrderId;
+    }
+
+    public String getPurchaseOrderNumber() {
+        return purchaseOrderNumber;
+    }
+
+    public void setPurchaseOrderNumber(String purchaseOrderNumber) {
+        this.purchaseOrderNumber = purchaseOrderNumber;
+    }
+
+    public Integer getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(Integer supplierId) {
+        this.supplierId = supplierId;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public LocalDate getExpectedDate() {
+        return expectedDate;
+    }
+
+    public void setExpectedDate(LocalDate expectedDate) {
+        this.expectedDate = expectedDate;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getPurchaseOrderStatus() {
+        return purchaseOrderStatus;
+    }
+
+    public void setPurchaseOrderStatus(String purchaseOrderStatus) {
+        this.purchaseOrderStatus = purchaseOrderStatus;
+    }
+
+    public Integer getProcurementUserId() {
+        return procurementUserId;
+    }
+
+    public void setProcurementUserId(Integer procurementUserId) {
+        this.procurementUserId = procurementUserId;
+    }
+}
+
+
