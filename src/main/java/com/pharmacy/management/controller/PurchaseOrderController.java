@@ -93,3 +93,15 @@ public class PurchaseOrderController {
             return "procurement/purchase-order-form";
         }
     }
+
+    @PostMapping("/purchase-orders/{purchaseOrderId}/delete")
+    public String delete(@PathVariable Integer purchaseOrderId, RedirectAttributes redirectAttributes) {
+        try {
+            purchaseOrderService.delete(purchaseOrderId);
+            redirectAttributes.addFlashAttribute("successMessage", "Purchase order was cancelled and retained in procurement history.");
+            return "redirect:/procurement/purchase-orders";
+        } catch (IllegalArgumentException exception) {
+            redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+            return "redirect:/procurement/purchase-orders";
+        }
+    }
