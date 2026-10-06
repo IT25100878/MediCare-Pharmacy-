@@ -105,3 +105,20 @@ public class PurchaseOrderController {
             return "redirect:/procurement/purchase-orders";
         }
     }
+
+    private void populateList(Model model, String keyword) {
+        String safeKeyword = keyword == null ? "" : keyword.trim();
+        model.addAttribute("purchaseOrders", purchaseOrderService.findAll(safeKeyword));
+        model.addAttribute("suppliers", purchaseOrderService.findAllSuppliers());
+        model.addAttribute("keyword", safeKeyword);
+    }
+
+    private void addExpectedDateError(PurchaseOrder purchaseOrder, BindingResult bindingResult) {
+        LocalDate orderDate = purchaseOrder.getOrderDate();
+        LocalDate expectedDate = purchaseOrder.getExpectedDate();
+        if (orderDate != null && expectedDate != null && expectedDate.isBefore(orderDate)) {
+            bindingResult.rejectValue("expectedDate", "purchaseOrder.date.invalid",
+                    "Expected date cannot be before the order date.");
+        }
+    }
+}
