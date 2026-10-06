@@ -30,3 +30,19 @@ public class StockReceiptForm {
     @NotNull(message = "Selling price is required.")
     @DecimalMin(value = "0.00", message = "Selling price cannot be negative.")
     private BigDecimal sellingPrice;
+
+    @NotNull(message = "Received quantity is required.")
+    @Min(value = 1, message = "Received quantity must be at least 1.")
+    private Integer receivedQuantity;
+
+    @NotNull(message = "Received date is required.")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate receivedDate = LocalDate.now();
+
+    @NotNull(message = "Expiry date is required.")
+    @Future(message = "Expiry date must be in the future.")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate expiryDate;
+
+    @Size(max = 500, message = "Notes cannot exceed 500 characters.")
+    private String notes;
