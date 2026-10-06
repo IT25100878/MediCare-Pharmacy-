@@ -184,3 +184,56 @@ public class ProcurementReceiptService {
         receiptRepository.save(receipt);
     }
 
+    private void validateFormValues(PurchaseOrderReceiptForm form) {
+        BigDecimal purchasePrice = form.getPurchasePrice();
+        BigDecimal sellingPrice = form.getSellingPrice();
+        if (purchasePrice != null && sellingPrice != null && sellingPrice.compareTo(purchasePrice) < 0) {
+            throw new IllegalArgumentException("Selling price must be equal to or greater than purchase price.");
+        }
+        if (form.getReceivedDate() != null && form.getExpiryDate() != null
+                && !form.getExpiryDate().isAfter(form.getReceivedDate())) {
+            throw new IllegalArgumentException("Expiry date must be after the received date.");
+        }
+    }
+
+    private void validateReceivablePurchaseOrder(PurchaseOrder purchaseOrder) {
+        String status = purchaseOrder.getPurchaseOrderStatus();
+        if ("CANCELLED".equals(status)) {
+            throw new IllegalArgumentException("A cancelled purchase order cannot be received.");
+        }
+        if ("RECEIVED".equals(status)) {
+            throw new IllegalArgumentException("This purchase order is already marked as received.");
+        }
+    }
+
+    private void ensureCompatibleBatch(MedicineBatch batch, PurchaseOrderReceiptForm form) {
+        if (batch.getExpiryDate() != null && !batch.getExpiryDate().equals(form.getExpiryDate())) {
+            throw new IllegalArgumentException("This batch number already exists with a different expiry date. Use the correct expiry date or a new batch number.");
+        }
+    }
+
+    private PurchaseOrder requirePurchaseOrder(Integer purchaseOrderId) {
+        return purchaseOrderRepository.findById(purchaseOrderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Purchase order not found."));
+    }
+
+    private Medicine requireMedicine(Integer medicineId) {
+        return medicineRepository.findById(medicineId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Medicine not found."));
+    }
+
+    private PharmacyBranch requireActiveBranch(Integer branchId) {
+        PharmacyBranch branch = pharmacyBranchRepository.findById(branchId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Branch not found."));
+        if (!branch.isActive()) {
+            throw new IllegalArgumentException("Choose an active branch.");
+        }
+        return branch;
+    }
+
+    private String trimToNull(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+}
+
+
