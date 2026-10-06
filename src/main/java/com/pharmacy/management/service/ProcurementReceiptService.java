@@ -145,3 +145,20 @@ public class ProcurementReceiptService {
         return stock;
     }
 
+    private void createStockTransaction(MedicineBatch batch,
+                                        PharmacyBranch branch,
+                                        PurchaseOrderReceiptForm form,
+                                        Integer purchaseOrderId,
+                                        Integer userId) {
+        StockTransaction transaction = new StockTransaction();
+        transaction.setBatch(batch);
+        transaction.setBranch(branch);
+        transaction.setTransactionType("STOCK_IN");
+        transaction.setQuantityChange(form.getReceivedQuantity());
+        transaction.setReferenceType("PURCHASE_ORDER");
+        transaction.setReferenceId(purchaseOrderId);
+        transaction.setNotes(trimToNull(form.getNotes()));
+        transaction.setCreatedByUserId(userId);
+        stockTransactionRepository.save(transaction);
+    }
+
