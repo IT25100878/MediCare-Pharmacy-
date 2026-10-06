@@ -5,5 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public class PurchaseOrderReceiptRepository {
+public interface PurchaseOrderReceiptRepository extends JpaRepository<PurchaseOrderReceipt, Integer> {
+
+    boolean existsByPurchaseOrder_PurchaseOrderId(Integer purchaseOrderId);
+
+    List<PurchaseOrderReceipt> findAllByOrderByReceivedAtDesc();
 }
