@@ -52,3 +52,16 @@ public class PurchaseOrderService {
         purchaseOrder.setProcurementUserId(currentUserService.getUserId(currentUserEmail));
         purchaseOrderRepository.save(purchaseOrder);
     }
+
+    @Transactional
+    public void update(Integer purchaseOrderId, PurchaseOrder formPurchaseOrder) {
+        requireSupplier(formPurchaseOrder.getSupplierId());
+        PurchaseOrder existing = findById(purchaseOrderId);
+        existing.setPurchaseOrderNumber(formPurchaseOrder.getPurchaseOrderNumber());
+        existing.setSupplierId(formPurchaseOrder.getSupplierId());
+        existing.setOrderDate(formPurchaseOrder.getOrderDate());
+        existing.setExpectedDate(formPurchaseOrder.getExpectedDate());
+        existing.setTotalAmount(formPurchaseOrder.getTotalAmount());
+        existing.setPurchaseOrderStatus(formPurchaseOrder.getPurchaseOrderStatus());
+        purchaseOrderRepository.save(existing);
+    }
