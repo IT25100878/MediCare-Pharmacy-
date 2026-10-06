@@ -54,3 +54,13 @@ public class FeedbackManagementService {
         if (form.getAssignedToUserId() != null && !appUserRepository.existsById(form.getAssignedToUserId())) {
             throw new IllegalArgumentException("The selected case owner no longer exists.");
         }
+        feedback.setFeedbackStatus(form.getFeedbackStatus());
+        feedback.setCategory(form.getCategory());
+        feedback.setPriority(form.getPriority());
+        feedback.setAssignedToUserId(form.getAssignedToUserId());
+        feedback.setAdminResponse(trimToNull(form.getAdminResponse()));
+        feedback.setClosedAt("CLOSED".equals(form.getFeedbackStatus()) ? LocalDateTime.now() : null);
+        feedback.setUpdatedAt(LocalDateTime.now());
+        feedbackRepository.save(feedback);
+    }
+
