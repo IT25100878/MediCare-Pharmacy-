@@ -16,5 +16,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "PurchaseOrders", schema = "dbo")
 public class PurchaseOrder {
-}
