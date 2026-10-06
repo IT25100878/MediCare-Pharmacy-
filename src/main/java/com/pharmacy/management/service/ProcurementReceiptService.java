@@ -82,3 +82,41 @@ public class ProcurementReceiptService {
         if (receiptRepository.existsByPurchaseOrder_PurchaseOrderId(purchaseOrder.getPurchaseOrderId())) {
             throw new IllegalArgumentException("This purchase order has already been received.");
         }
+
+        Medicine medicine = requireMedicine(form.getMedicineId());
+        PharmacyBranch branch = requireActiveBranch(form.getBranchId());
+        Integer userId = currentUserService.getUserId(currentUserEmail);
+
+        MedicineBatch batch = medicineBatchRepository
+                .findByMedicine_MedicineIdAndBatchNumberIgnoreCase(medicine.getMedicineId(), form.getBatchNumber().trim())
+                .orElseGet(() -> createBatch(form, medicine, userId));
+
+        ensureCompatibleBatch(batch, form);
+        batch.setInitialQuantity(batch.getInitialQuantity() + form.getReceivedQuantity());
+        batch.setAvailableQuantity(batch.getAvailableQuantity() + form.getReceivedQuantity());
+        batch.setPurchasePrice(form.getPurchasePrice());
+        batch.setSellingPrice(form.getSellingPrice());
+        batch.setReceivedDate(form.getReceivedDate());
+        batch.setExpiryDate(form.getExpiryDate());
+        batch = medicineBatchRepository.save(batch);
+
+        final MedicineBatch receivedBatch = batch;
+        BranchStock branchStock = branchStockRepository
+                .findByBranch_BranchIdAndBatch_BatchId(branch.getBranchId(), receivedBatch.getBatchId())
+                .orElseGet(() -> createEmptyBranchStock(branch, receivedBatch));
+        branchStock.setQuantityInStock(branchStock.getQuantityInStock() + form.getReceivedQuantity());
+        branchStock.setUpdatedAt(LocalDateTime.now());
+        branchStockRepository.save(branchStock);
+
+        medicine.setPurchasePrice(form.getPurchasePrice());
+        medicine.setSellingPrice(form.getSellingPrice());
+        medicine.setUpdatedAt(LocalDateTime.now());
+        medicineRepository.save(medicine);
+
+        createStockTransaction(receivedBatch, branch, form, purchaseOrder.getPurchaseOrderId(), userId);
+        createReceipt(purchaseOrder, medicine, receivedBatch, branch, form, userId);
+
+        purchaseOrder.setPurchaseOrderStatus("RECEIVED");
+        purchaseOrderRepository.save(purchaseOrder);
+        medicineService.refreshMedicineStockSummary(medicine.getMedicineId());
+    }
