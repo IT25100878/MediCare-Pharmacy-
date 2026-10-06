@@ -4,5 +4,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+
+@Controller
+@RequestMapping("/inventory")
 public class InventoryWorkflowController {
+
+    @GetMapping({"/stock", "/transfers"})
+    public String legacyInventoryPages() {
+        return "redirect:/inventory/medicines";
+    }
 }
