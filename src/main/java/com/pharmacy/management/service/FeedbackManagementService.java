@@ -85,5 +85,9 @@ public class FeedbackManagementService {
         return new FeedbackAnalytics(cases.size(), newCases, inProgress, resolved, closed, urgent, average);
     }
 
+    private boolean contains(String value, String search) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(search);
+    }
+
 
 
