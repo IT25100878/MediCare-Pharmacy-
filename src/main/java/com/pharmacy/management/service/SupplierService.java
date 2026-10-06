@@ -35,3 +35,12 @@ public class SupplierService {
         return supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Supplier not found."));
     }
+
+    @Transactional
+    public void create(Supplier supplier) {
+        supplier.setSupplierId(null);
+        supplier.setBusinessRegistrationId(trimToNull(supplier.getBusinessRegistrationId()));
+        supplier.setMedicineCategory(trimToNull(supplier.getMedicineCategory()));
+        supplier.setPaymentTerms(trimToNull(supplier.getPaymentTerms()));
+        supplierRepository.save(supplier);
+    }
