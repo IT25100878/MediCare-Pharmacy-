@@ -65,3 +65,20 @@ public class PurchaseOrderService {
         existing.setPurchaseOrderStatus(formPurchaseOrder.getPurchaseOrderStatus());
         purchaseOrderRepository.save(existing);
     }
+
+    @Transactional
+    public void delete(Integer purchaseOrderId) {
+        PurchaseOrder purchaseOrder = findById(purchaseOrderId);
+        if ("RECEIVED".equals(purchaseOrder.getPurchaseOrderStatus())) {
+            throw new IllegalArgumentException("A received purchase order is part of the stock audit and cannot be cancelled.");
+        }
+        purchaseOrder.setPurchaseOrderStatus("CANCELLED");
+        purchaseOrderRepository.save(purchaseOrder);
+    }
+
+    private void requireSupplier(Integer supplierId) {
+        if (supplierId == null || !supplierRepository.existsById(supplierId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please choose a valid supplier.");
+        }
+    }
+}
