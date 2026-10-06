@@ -27,3 +27,20 @@ public class PurchaseOrderService {
         this.supplierRepository = supplierRepository;
         this.currentUserService = currentUserService;
     }
+
+    public List<PurchaseOrder> findAll(String keyword) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "orderDate");
+        if (keyword == null || keyword.isBlank()) {
+            return purchaseOrderRepository.findAll(sort);
+        }
+        return purchaseOrderRepository.findByPurchaseOrderNumberContainingIgnoreCase(keyword.trim(), sort);
+    }
+
+    public List<Supplier> findAllSuppliers() {
+        return supplierRepository.findAll(Sort.by(Sort.Direction.ASC, "supplierName"));
+    }
+
+    public PurchaseOrder findById(Integer purchaseOrderId) {
+        return purchaseOrderRepository.findById(purchaseOrderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Purchase order not found."));
+    }
