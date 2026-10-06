@@ -59,3 +59,15 @@ public class SupplierService {
         existing.setActive(formSupplier.isActive());
         supplierRepository.save(existing);
     }
+    @Transactional
+    public void delete(Integer supplierId) {
+        supplierRepository.delete(findById(supplierId));
+        // Execute the delete before the controller sends its success message.
+        supplierRepository.flush();
+    }
+
+    private String trimToNull(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+}
+
