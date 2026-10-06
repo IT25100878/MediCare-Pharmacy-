@@ -28,3 +28,11 @@ public class PurchaseOrderController {
     public PurchaseOrderController(PurchaseOrderService purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
     }
+
+
+    @GetMapping("/purchase-orders")
+    public String purchaseOrders(@RequestParam(required = false) String keyword, Model model) {
+        populateList(model, keyword);
+        model.addAttribute("purchaseOrder", new PurchaseOrder());
+        return "procurement/purchase-orders";
+    }
